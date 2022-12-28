@@ -5,3 +5,13 @@
 body {
   @apply font-roboto bg-gray-900 antialiased bg-app bg-no-repeat bg-cover;
 }
+
+::-webkit-scrollbar {
+  width: 4px;
+  height: 2px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #f7dd43;
+  border-radius: 20px;
+}

@@ -34,6 +34,17 @@ export default function Home(props: HomeProps) {
     }
   }
 
+  const user = true
+
+  const last4participants = [
+    { userImg: 'https://avatars.githubusercontent.com/u/87643260?v=4' },
+    { userImg: 'https://avatars.githubusercontent.com/u/87643260?v=4' },
+    { userImg: 'https://avatars.githubusercontent.com/u/87643260?v=4' },
+    { userImg: 'https://avatars.githubusercontent.com/u/87643260?v=4' },
+  ]
+
+  const pools: any = []
+
   return (
     <>
       <Head>
@@ -42,8 +53,8 @@ export default function Home(props: HomeProps) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="max-w-[1124px] mt-10 2xl:mt-0 h-screen mx-auto grid gap-28 grid-cols-2 items-center">
-        <main>
+      <main className="max-w-[1124px] mt-10 2xl:mt-0 h-screen mx-auto grid gap-28 grid-cols-2 items-center">
+        <section className="col-span-1">
           <Image src={logo} alt="logo/nlw-copa" />
           <h1 className="mt-14 text-white text-5xl font-bold leading-tight">
             Crie seu próprio bolão da copa e compartilhe entre amigos!
@@ -89,7 +100,7 @@ export default function Home(props: HomeProps) {
               <Image src={check} alt="check/icon" />
               <div className="flex flex-col items-start p-4">
                 <span className="text-2xl font-bold">+{props.poolCount}</span>
-                <span>Bolôes criados</span>
+                <span>Bolões criados</span>
               </div>
             </div>
             <div className="h-[63px] w-px bg-gray-600" />
@@ -101,9 +112,47 @@ export default function Home(props: HomeProps) {
               </div>
             </div>
           </div>
-        </main>
-        <Image src={preview} alt="preview/img" />
-      </div>
+        </section>
+
+        <section className="col-span-1">
+          {user ? (
+            <div className="bg-gray-800 min-w-full text-white p-4 shadow-xl">
+              <h1 className="text-center font-bold text-2xl mb-4">
+                Meus boloẽs
+              </h1>
+              <>
+                {pools ? (
+                  <div className="bg-gray-600 p-2 rounded cursor-pointer flex justify-between items-center">
+                    <div className="flex-1 flex-grow">
+                      <h3 className="font-bold text-lg">Bolão Xablau</h3>
+                      <span className="text-gray-200">Código: SAS5D45</span>
+                    </div>
+                    <div className="relative items-center justify-center flex-grow -top-[18px]">
+                      {last4participants.map((user, index) => {
+                        const position = index === 0 ? 27 : (index + 1) * 27
+                        return (
+                          <img
+                            src={user.userImg}
+                            className="rounded-full w-10 h-10 absolute border-[2px] border-gray-600"
+                            style={{ right: position, zIndex: 4 - index }}
+                          />
+                        )
+                      })}
+                      <div className="rounded-full w-10 h-10 absolute z-10 right-1 flex items-center justify-center bg-[#29292E] border-[2px] border-gray-600 tracking-widest">
+                        +8
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <>Sem bolões ainda</>
+                )}
+              </>
+            </div>
+          ) : (
+            <Image src={preview} alt="preview/img" />
+          )}
+        </section>
+      </main>
     </>
   )
 }
