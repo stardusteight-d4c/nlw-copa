@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import React from 'react'
 
 interface Props {}
@@ -11,7 +12,10 @@ export function Pools(props: Props) {
   ]
 
   return (
-    <div className="bg-gray-600 p-2 rounded border-b-[2px] border-yellow-500 cursor-pointer flex justify-between items-center">
+    <Link
+      href={`/pool/SAS5D45`}
+      className="bg-gray-600 p-2 rounded border-b-[2px] border-yellow-500 cursor-pointer flex justify-between items-center"
+    >
       <div className="flex-1 flex-grow">
         <h3 className="font-bold text-lg">Bolão Xablau</h3>
         <span className="text-gray-200">Código: SAS5D45</span>
@@ -31,6 +35,6 @@ export function Pools(props: Props) {
           +8
         </div>
       </div>
-    </div>
+    </Link>
   )
 }
