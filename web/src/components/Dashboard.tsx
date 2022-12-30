@@ -3,11 +3,18 @@ import React, { useState } from 'react'
 import { BsSearch, BsBackspaceFill } from 'react-icons/bs'
 import { Pools } from './Pools'
 import preview from '../assets/preview-mobile.png'
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
+import { auth } from '../firebase'
+import { useAppSelector } from '../store/hooks'
+import { selectUser } from '../store/userSlice'
 
 interface Props {}
 
 export const Dashboard = (props: Props) => {
   const [search, setSearch] = useState(false)
+  const currentUser = useAppSelector(selectUser)
+
+  const provider = new GoogleAuthProvider()
 
   const user = true
 
@@ -15,15 +22,24 @@ export const Dashboard = (props: Props) => {
 
   return (
     <section className="col-span-1 h-full">
-      <div className='w-full flex items-end justify-end'>
-        <button
-          className="bg-blue-600 hover:brightness-110 text-white font-bold text-sm uppercase px-6 py-4 rounded"
-          type="submit"
-        >
-          Entrar com Google
-        </button>
+      <div className="w-full flex items-end justify-end">
+        {currentUser ? (
+          <button
+            onClick={() => auth.signOut()}
+            className="bg-red-600 hover:brightness-110 text-white font-bold text-sm uppercase px-6 py-4 rounded"
+          >
+            Sair
+          </button>
+        ) : (
+          <button
+            onClick={() => signInWithPopup(auth, provider)}
+            className="bg-blue-600 hover:brightness-110 text-white font-bold text-sm uppercase px-6 py-4 rounded"
+          >
+            Entrar com Google
+          </button>
+        )}
       </div>
-      {user ? (
+      {currentUser ? (
         <div className="flex items-center justify-center h-full">
           <div className="bg-gray-800 rounded-md min-w-full text-white py-4 shadow-xl">
             <h1 className="text-center font-bold text-2xl mb-2">
