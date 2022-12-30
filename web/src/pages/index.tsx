@@ -34,7 +34,7 @@ export default function Home(props: HomeProps) {
               id: user.uid,
               email: user.email,
               name: user.displayName,
-              user_img: user.photoURL,
+              avatarUrl: user.photoURL,
             })
           )
         : dispatch(logout())
