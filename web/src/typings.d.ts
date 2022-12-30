@@ -8,3 +8,11 @@ interface User {
   name: string
   avatarUrl: string
 }
+
+interface Pool {
+  id: string
+  title: string
+  code: string
+  createdAt: Date
+  ownerId: string
+}

@@ -12,7 +12,8 @@ import { useAppDispatch } from '../store/hooks'
 import { useEffect } from 'react'
 import { onAuthStateChanged } from 'firebase/auth'
 import { login, logout } from '../store/userSlice'
-import { auth } from '../firebase'
+import { auth } from '../services/firebase'
+import { createPool, createUser } from '../services/api-routes'
 
 interface HomeProps {
   poolCount: number
@@ -23,30 +24,39 @@ interface HomeProps {
 export default function Home(props: HomeProps) {
   const [pool, setPool] = useState('')
   const currentUser = useAppSelector(selectUser)
-
   const dispatch = useAppDispatch()
 
   useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, async (user) => {
       user
-        ? dispatch(
-            login({
-              id: user.uid,
+        ? await api
+            .post(createUser, {
               email: user.email,
               name: user.displayName,
               avatarUrl: user.photoURL,
             })
-          )
+            .then(({ data }) => {
+              dispatch(
+                login({
+                  id: data.user.id,
+                  email: data.user.email,
+                  name: data.user.name,
+                  avatarUrl: data.user.avatarUrl,
+                })
+              )
+            })
+            .catch((error) => console.log(error.toJSON()))
         : dispatch(logout())
     })
   }, [])
 
-  async function createPool(event: FormEvent) {
+  async function handleCreatePool(event: FormEvent) {
     event?.preventDefault()
 
     try {
-      const response = await api.post('/pools', {
+      const response = await api.post(createPool, {
         title: pool,
+        ownerId: currentUser?.id,
       })
       const { code } = response.data
 
@@ -87,9 +97,9 @@ export default function Home(props: HomeProps) {
             </strong>
           </div>
 
-          {currentUser && (
+          {currentUser ? (
             <>
-              <form onSubmit={createPool} className="mt-10 flex gap-2">
+              <form onSubmit={handleCreatePool} className="mt-10 flex gap-2">
                 <input
                   className="flex-1 text-gray-500 placeholder:text-sm outline-none px-6 py-4 rounded bg-gray-800 border border-gray-600"
                   type="text"
@@ -111,6 +121,16 @@ export default function Home(props: HomeProps) {
                 usar para convidar outras pessoas 🚀
               </p>
             </>
+          ) : (
+            <div className="text-center">
+              <div className="text-yellow-500 font-bold text-4xl pt-4">
+                Entre e comece a apostar!
+              </div>
+              <p className="mt-4 text-sm leading-relaxed text-gray-300">
+                Após criar seu bolão, você receberá um código único que poderá
+                usar para convidar outras pessoas 🚀
+              </p>
+            </div>
           )}
 
           <div className="flex items-center justify-between mt-10 py-10 border-t border-gray-600 text-gray-100">

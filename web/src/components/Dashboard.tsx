@@ -1,24 +1,53 @@
 import Image from 'next/image'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { BsSearch, BsBackspaceFill } from 'react-icons/bs'
 import { Pools } from './Pools'
 import preview from '../assets/preview-mobile.png'
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
-import { auth } from '../firebase'
+import { auth } from '../services/firebase'
 import { useAppSelector } from '../store/hooks'
 import { selectUser } from '../store/userSlice'
+import { getUserPools, searchPoolByCode } from '../services/api-routes'
+import { api } from '../lib/axios'
 
 interface Props {}
 
 export const Dashboard = (props: Props) => {
   const [search, setSearch] = useState(false)
+  const [pools, setPools] = useState<[Pool] | []>([])
+  const [searchTerm, setSearchTerm] = useState('')
   const currentUser = useAppSelector(selectUser)
 
   const provider = new GoogleAuthProvider()
 
-  const user = true
+  useEffect(() => {
+    if (currentUser && !search) {
+      ;(async () => {
+        await api
+          .get(`${getUserPools}/${currentUser?.id}`)
+          .then(({ data }) => setPools(data.pools))
+          .catch((error) => console.log(error.toJSON()))
+      })()
+    }
+  }, [currentUser, search])
 
-  const pools: any = []
+  useEffect(() => {
+    if (searchTerm) {
+      ;(async () => {
+        await api
+          .get(searchPoolByCode, {
+            params: {
+              code: searchTerm,
+            },
+          })
+          .then(({ data }) => setPools([data.pool]))
+          .catch((error) => console.log(error.toJSON()))
+      })()
+    }
+  }, [searchTerm])
+
+  console.log('searchTerm', searchTerm)
+  console.log('pools', pools)
 
   return (
     <section className="col-span-1 h-full">
@@ -50,6 +79,7 @@ export const Dashboard = (props: Props) => {
                 {search ? (
                   <div className="flex gap-x-2">
                     <input
+                      onChange={(e) => setSearchTerm(e.target.value)}
                       placeholder="Insira o código do bolão"
                       className="outline-none grow text-gray-500 bg-gray-800 border border-gray-600 flex gap-x-2 justify-center items-center w-full brightness-110 text-sm px-6 py-4 rounded"
                     />
@@ -74,11 +104,12 @@ export const Dashboard = (props: Props) => {
                 )}
               </div>
               <div className="w-full h-[2px] bg-gray-600 px-4 mt-6 mb-4" />
-              {pools ? (
+              {pools !== undefined && pools !== null && pools.length > 0 ? (
                 <>
                   <div className="space-y-2 max-h-[530px] overflow-y-scroll overflow-x-hidden py-2">
-                    <Pools />
-                    <Pools />
+                    {pools.map((pool) => (
+                      <Pools title={pool.title} code={pool.code} />
+                    ))}
                   </div>
                 </>
               ) : (
