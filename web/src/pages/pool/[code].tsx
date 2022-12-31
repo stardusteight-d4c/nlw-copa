@@ -1,13 +1,16 @@
 import Head from 'next/head'
 import React, { useState } from 'react'
-import { Header } from '../../components/header/Header'
+import { Header } from '../../components/pool/Header'
 import ReactCountryFlag from 'react-country-flag'
 import { VscClose } from 'react-icons/vsc'
+import { GuessModal } from '../../components/pool/GuessModal'
+import { Guess } from '../../components/pool/Guess'
 
 interface Props {}
 
 export default function PoolCode(props: Props) {
   const [activeItem, setActiveItem] = useState('your_guesses')
+  const [openModal, setOpenModal] = useState(false)
 
   return (
     <>
@@ -17,11 +20,16 @@ export default function PoolCode(props: Props) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
+      {openModal && <GuessModal setOpenModal={setOpenModal} />}
+
       <main className="w-screen min-h-screen bg-gray-900 ">
         <Header />
         <section className="bg-gray-800 w-[600px] mt-8 mx-auto rounded text-white shadow-xl">
           <div className="w-[600px] mx-auto">
-            <button className="bg-ignite-500 hover:brightness-110 w-full text-white font-bold text-sm uppercase px-6 py-4 rounded-t">
+            <button
+              onClick={() => setOpenModal(true)}
+              className="bg-ignite-500 hover:brightness-110 w-full text-white font-bold text-sm uppercase px-6 py-4 rounded-t"
+            >
               Criar palpite
             </button>
           </div>
@@ -54,98 +62,8 @@ export default function PoolCode(props: Props) {
             </div>
           </div>
         </section>
-        {activeItem === 'your_guesses' && (
-          <div className="bg-gray-800 border-b-[3px] p-6 border-b-yellow-500 w-[600px] mt-4 mx-auto rounded text-white shadow-xl">
-            <div className="text-center flex-col">
-              <div>
-                <h2 className="font-bold text-2xl">Brasil vs. Argentina</h2>
-                <span className="text-gray-200">
-                  22 de Novembro de 2022 às 16:00h
-                </span>
-              </div>
-            </div>
-            <div className="flex justify-center items-center mt-4">
-              <div className="flex gap-x-2 justify-center items-center">
-                <span className="flex items-center justify-center h-[35px] w-[50px] rounded bg-gray-900 border border-gray-800 text-white">
-                  10
-                </span>
-                <ReactCountryFlag
-                  countryCode="BR"
-                  svg
-                  style={{
-                    width: '2.5em',
-                    height: '2.5em',
-                  }}
-                  title="US"
-                />
-              </div>
-              <VscClose className="text-gray-200 text-3xl mx-5" />
-              <div className="flex gap-x-2 justify-center items-center">
-                <ReactCountryFlag
-                  countryCode="US"
-                  svg
-                  style={{
-                    width: '2.5em',
-                    height: '2.5em',
-                  }}
-                  title="US"
-                />
-                <span className="flex items-center justify-center h-[35px] w-[50px] rounded bg-gray-900 border border-gray-800 text-white">
-                  1
-                </span>
-              </div>
-            </div>
-          </div>
-        )}
-        {activeItem === 'all_guesses' && (
-          <div className="bg-gray-800 relative border-b-[3px] p-6 border-b-yellow-500 w-[600px] mt-4 mx-auto rounded text-white shadow-xl">
-            <div className="text-center flex-col">
-              <div>
-                <h2 className="font-bold text-2xl">Brasil vs. Argentina</h2>
-                <span className="text-gray-200">
-                  22 de Novembro de 2022 às 16:00h
-                </span>
-              </div>
-            </div>
-            <div className="flex justify-center items-center mt-4">
-              <div className="flex gap-x-2 justify-center items-center">
-                <span className="flex items-center justify-center h-[35px] w-[50px] rounded bg-gray-900 border border-gray-800 text-white">
-                  10
-                </span>
-                <ReactCountryFlag
-                  countryCode="BR"
-                  svg
-                  style={{
-                    width: '2.5em',
-                    height: '2.5em',
-                  }}
-                  title="US"
-                />
-              </div>
-              <VscClose className="text-gray-200 text-3xl mx-5" />
-              <div className="flex gap-x-2 justify-center items-center">
-                <ReactCountryFlag
-                  countryCode="US"
-                  svg
-                  style={{
-                    width: '2.5em',
-                    height: '2.5em',
-                  }}
-                  title="US"
-                />
-                <span className="flex items-center justify-center h-[35px] w-[50px] rounded bg-gray-900 border border-gray-800 text-white">
-                  1
-                </span>
-              </div>
-            </div>
-            <div className="w-full absolute left-0 bottom-1 text-sm text-center">
-              <span>Criado por </span>
-              <span className="w-fit text-yellow-500 uppercase font-bold mx-auto">
-                Gabriel Sena
-              </span>
-            </div>
-          </div>
-        )}
+        {activeItem === 'your_guesses' && <Guess />}
+        {activeItem === 'all_guesses' && <Guess />}
         {activeItem === 'group_ranking' && (
           <div className="bg-gray-800 border-b-[3px] p-6 border-b-yellow-500 w-[600px] mt-4 mx-auto rounded text-white shadow-xl">
             <div className="flex items-center justify-between">

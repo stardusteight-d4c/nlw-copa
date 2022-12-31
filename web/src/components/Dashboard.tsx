@@ -32,7 +32,7 @@ export const Dashboard = (props: Props) => {
   }, [currentUser, search])
 
   useEffect(() => {
-    if (searchTerm) {
+    if (search) {
       ;(async () => {
         await api
           .get(searchPoolByCode, {
@@ -40,14 +40,11 @@ export const Dashboard = (props: Props) => {
               code: searchTerm,
             },
           })
-          .then(({ data }) => setPools([data.pool]))
+          .then(({ data }) => setPools(data.pool))
           .catch((error) => console.log(error.toJSON()))
       })()
     }
-  }, [searchTerm])
-
-  console.log('searchTerm', searchTerm)
-  console.log('pools', pools)
+  }, [searchTerm, search])
 
   return (
     <section className="col-span-1 h-full">
@@ -114,9 +111,17 @@ export const Dashboard = (props: Props) => {
                 </>
               ) : (
                 <div className="p-4 text-center">
-                  Você ainda não está participando de nenhum bolão, que tal{' '}
-                  <span className="text-yellow-500">buscar um por código</span>{' '}
-                  ou <span className="text-yellow-500">criar um novo</span>?
+                  {search ? (
+                    <p>Digite um código válido e comece a apostar</p>
+                  ) : (
+                    <p>
+                      Você ainda não está participando de nenhum bolão, que tal{' '}
+                      <span className="text-yellow-500">
+                        buscar um por código
+                      </span>{' '}
+                      ou <span className="text-yellow-500">criar um novo</span>?
+                    </p>
+                  )}
                 </div>
               )}
             </div>

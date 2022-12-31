@@ -116,9 +116,9 @@ export class AppController {
 
     console.log(pool)
     if (pool) {
-      return reply.status(200).send({ pool })
+      return reply.status(200).send({ pool: [pool] })
     } else {
-      return reply.status(200).send([{}])
+      return reply.status(200).send({ pool: [] })
     }
   }
 

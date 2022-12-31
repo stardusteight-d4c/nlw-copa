@@ -52,16 +52,13 @@ export default function Home(props: HomeProps) {
 
   async function handleCreatePool(event: FormEvent) {
     event?.preventDefault()
-
     try {
       const response = await api.post(createPool, {
         title: pool,
         ownerId: currentUser?.id,
       })
       const { code } = response.data
-
       await navigator.clipboard.writeText(code)
-
       alert('Bolão criado, código copiado com sucesso')
       setPool('')
     } catch (error) {
