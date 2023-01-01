@@ -3,9 +3,11 @@ import React from 'react'
 import { IoMdArrowBack } from 'react-icons/io'
 import { AiOutlineTwitter } from 'react-icons/ai'
 
-interface Props {}
+interface Props {
+  pool: Pool
+}
 
-export function Header(props: Props) {
+export function Header({ pool }: Props) {
   const last4participants = [
     { userImg: 'https://avatars.githubusercontent.com/u/87643260?v=4' },
     { userImg: 'https://avatars.githubusercontent.com/u/87643260?v=4' },
@@ -26,6 +28,7 @@ export function Header(props: Props) {
                 const position = index === 0 ? 32 : (index + 1) * 32
                 return (
                   <img
+                    key={index}
                     src={user.userImg}
                     className="rounded-full w-12 h-12 absolute border-[2px] border-gray-600"
                     style={{ right: position, zIndex: 4 - index }}
@@ -39,12 +42,12 @@ export function Header(props: Props) {
           </div>
         </div>
         <div className="w-fit ml-[20px] text-center">
-          <h3 className="font-bold text-lg">Bolão Xablau</h3>
-          <span className="text-gray-200">Código: SAS5D45</span>
+          <h3 className="font-bold text-lg">{pool.title}</h3>
+          <span className="text-gray-200">Código: {pool.code}</span>
         </div>
         <Link
           target="_blank"
-          href="https://twitter.com/intent/tweet?text=http%3A//localhost%3A3000/pool/SAS5D45"
+          href={`https://twitter.com/intent/tweet?text=http%3A//localhost%3A3000/pool/${pool.code}`}
           className="px-5 py-2 flex items-center justify-center bg-blue-500 rounded"
         >
           <AiOutlineTwitter className="text-2xl mr-2 cursor-pointer" />

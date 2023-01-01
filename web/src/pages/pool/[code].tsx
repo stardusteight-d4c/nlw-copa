@@ -1,16 +1,37 @@
 import Head from 'next/head'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Header } from '../../components/pool/Header'
 import ReactCountryFlag from 'react-country-flag'
 import { VscClose } from 'react-icons/vsc'
 import { GuessModal } from '../../components/pool/GuessModal'
 import { Guess } from '../../components/pool/Guess'
+import { api } from '../../lib/axios'
+import { guessesByPoolId, poolByCode } from '../../services/api-routes'
 
-interface Props {}
+interface Props {
+  pool: [Pool]
+}
 
-export default function PoolCode(props: Props) {
+export default function PoolCode({ pool }: Props) {
+  const poolData = pool[0]
   const [activeItem, setActiveItem] = useState('your_guesses')
   const [openModal, setOpenModal] = useState(false)
+  const [guesses, setGuesses] = useState([])
+
+  useEffect(() => {
+    ;(async () => {
+      await api
+        .get(guessesByPoolId, {
+          params: {
+            poolId: poolData.id,
+          },
+        })
+        .then(({ data }) => setGuesses(data.guesses))
+        .catch((error) => console.log(error))
+    })()
+  }, [poolData])
+
+  console.log(guesses)
 
   return (
     <>
@@ -20,10 +41,12 @@ export default function PoolCode(props: Props) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      {openModal && <GuessModal setOpenModal={setOpenModal} />}
+      {openModal && (
+        <GuessModal setOpenModal={setOpenModal} poolId={poolData.id} />
+      )}
 
       <main className="w-screen min-h-screen bg-gray-900 ">
-        <Header />
+        <Header pool={poolData} />
         <section className="bg-gray-800 w-[600px] mt-8 mx-auto rounded text-white shadow-xl">
           <div className="w-[600px] mx-auto">
             <button
@@ -62,8 +85,20 @@ export default function PoolCode(props: Props) {
             </div>
           </div>
         </section>
-        {activeItem === 'your_guesses' && <Guess />}
-        {activeItem === 'all_guesses' && <Guess />}
+        {activeItem === 'your_guesses' && guesses && (
+          <>
+            {guesses.map((guess: any) => (
+              <Guess guess={guess} yourGuesses={true} />
+            ))}
+          </>
+        )}
+        {activeItem === 'all_guesses' && guesses && (
+          <>
+            {guesses.map((guess: any) => (
+              <Guess guess={guess} />
+            ))}
+          </>
+        )}
         {activeItem === 'group_ranking' && (
           <div className="bg-gray-800 border-b-[3px] p-6 border-b-yellow-500 w-[600px] mt-4 mx-auto rounded text-white shadow-xl">
             <div className="flex items-center justify-between">
@@ -91,4 +126,23 @@ export default function PoolCode(props: Props) {
       </main>
     </>
   )
+}
+
+export const getServerSideProps = async (context: any) => {
+  const pool = await api
+    .get(poolByCode, {
+      params: {
+        code: context.params.code,
+      },
+    })
+    .then(({ data }) => data)
+    .catch((error) => console.log(error.toJSON()))
+
+  console.log(pool)
+
+  return {
+    props: {
+      ...pool,
+    },
+  }
 }

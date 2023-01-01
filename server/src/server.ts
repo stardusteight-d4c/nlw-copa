@@ -4,7 +4,7 @@ import { appRoutes } from './routes'
 
 async function bootstrap() {
   const fastify = Fastify({
-    logger: true,
+    logger: false,
   })
   fastify.register(cors, {
     origin: true,

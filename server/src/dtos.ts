@@ -13,6 +13,10 @@ export interface UserPoolsRequest {
   userId: string
 }
 
+export interface GuessesByPool {
+  poolId: string
+}
+
 export interface CreateGuess {
   firstTeamCountryCode: string
   secondTeamCountryCode: string

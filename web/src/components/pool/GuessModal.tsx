@@ -3,14 +3,21 @@ import ReactCountryFlag from 'react-country-flag'
 import { VscClose } from 'react-icons/vsc'
 import { AiFillCloseSquare } from 'react-icons/ai'
 import { countryList } from '../../utils/country-list'
-import { monthList } from '../../utils/month'
+import { monthList } from '../../utils/month-list'
+import axios from 'axios'
+import { createGuess } from '../../services/api-routes'
+import { useAppSelector } from '../../store/hooks'
+import { selectUser } from '../../store/userSlice'
+import { api } from '../../lib/axios'
 
 interface Props {
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>
+  poolId: string
 }
 
-export const GuessModal = ({ setOpenModal }: Props) => {
+export const GuessModal = ({ setOpenModal, poolId }: Props) => {
   const [click, setClick] = useState<boolean>(false)
+  const currentUser = useAppSelector(selectUser)
   const [formData, setFormData] = useState({
     firstTeam: '',
     firstTeamScore: '',
@@ -23,7 +30,21 @@ export const GuessModal = ({ setOpenModal }: Props) => {
     minutes: '',
   })
 
-  console.log(formData);
+  const handleSubmit = async () => {
+    const data = { ...formData }
+    await api.post(createGuess, {
+      firstTeamCountryCode: data.firstTeam,
+      firstTeamPoints: data.firstTeamScore,
+      secondTeamCountryCode: data.secondTeam,
+      secondTeamPoints: data.secondTeamScore,
+      date: `${data.day}/${data.month}/${data.year} ${data.hour}:${data.minutes}`,
+      poolId,
+      userId: currentUser?.id,
+    })
+  }
+
+  
+  console.log('currentUser', currentUser);
   
 
   useEffect(() => {
@@ -107,9 +128,9 @@ export const GuessModal = ({ setOpenModal }: Props) => {
         id="month"
         className="bg-gray-600 text-center w-[115px] h-[40px] outline-none p-2 rounded"
       >
-        {monthList.map((month) => (
-          <option key={month} value={month}>
-            {month}
+        {Object.entries(monthList).map((month, index) => (
+          <option key={index} value={Number(month[0]) < 10 ? '0' + month[0] : month[0]}>
+            {month[1]}
           </option>
         ))}
       </select>
@@ -252,7 +273,7 @@ export const GuessModal = ({ setOpenModal }: Props) => {
             className="bg-yellow-500 mt-4 flex w-fit gap-x-2 justify-center items-center hover:brightness-110 text-gray-900 font-bold text-sm px-4 py-2 rounded"
             type="button"
           >
-            <span>Enviar palpite</span>
+            <span onClick={handleSubmit}>Enviar palpite</span>
           </button>
         </div>
       </div>

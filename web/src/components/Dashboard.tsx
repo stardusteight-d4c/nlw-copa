@@ -7,7 +7,7 @@ import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
 import { auth } from '../services/firebase'
 import { useAppSelector } from '../store/hooks'
 import { selectUser } from '../store/userSlice'
-import { getUserPools, searchPoolByCode } from '../services/api-routes'
+import { getUserPools, poolByCode } from '../services/api-routes'
 import { api } from '../lib/axios'
 
 interface Props {}
@@ -35,7 +35,7 @@ export const Dashboard = (props: Props) => {
     if (search) {
       ;(async () => {
         await api
-          .get(searchPoolByCode, {
+          .get(poolByCode, {
             params: {
               code: searchTerm,
             },
