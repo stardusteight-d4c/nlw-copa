@@ -1,18 +1,35 @@
 import Link from 'next/link'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { api } from '../lib/axios'
+import { getParticipants } from '../services/api-routes'
 
 interface Props {
   title: string
   code: string
+  poolId: string
 }
 
-export function Pools({ title, code }: Props) {
-  const last4participants = [
-    { userImg: 'https://avatars.githubusercontent.com/u/87643260?v=4' },
-    { userImg: 'https://avatars.githubusercontent.com/u/87643260?v=4' },
-    { userImg: 'https://avatars.githubusercontent.com/u/87643260?v=4' },
-    { userImg: 'https://avatars.githubusercontent.com/u/87643260?v=4' },
-  ]
+export function Pools({ title, code, poolId }: Props) {
+  const [participants, setParticipants] = useState<any>([])
+
+  useEffect(() => {
+    ;(async () => {
+      await api
+        .get(getParticipants, {
+          params: {
+            poolId,
+          },
+        })
+        .then(({ data }) => setParticipants(data))
+        .catch((error) => console.log(error.toJSON()))
+    })()
+  }, [code])
+
+  console.log('participants', participants)
+
+  if (!participants.participants) {
+    return <></>
+  }
 
   return (
     <Link
@@ -24,19 +41,22 @@ export function Pools({ title, code }: Props) {
         <span className="text-gray-200">Código: {code}</span>
       </div>
       <div className="relative items-center justify-center flex-grow -top-[18px]">
-        {last4participants.map((user, index) => {
+        {participants.participants.map((participant: any, index: any) => {
           const position = index === 0 ? 27 : (index + 1) * 27
           return (
             <img
               key={index}
-              src={user.userImg}
+              referrerPolicy="no-referrer"
+              src={participant.user.avatarUrl}
               className="rounded-full w-10 h-10 absolute border-[2px] border-gray-600"
               style={{ right: position, zIndex: 4 - index }}
             />
           )
         })}
         <div className="rounded-full w-10 h-10 absolute z-10 right-1 flex items-center justify-center bg-[#29292E] border-[2px] border-gray-600 tracking-widest">
-          +8
+          {participants.count > 4
+            ? `+${participants.count - 4}`
+            : participants.count}
         </div>
       </div>
     </Link>

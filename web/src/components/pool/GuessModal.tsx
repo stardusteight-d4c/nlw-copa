@@ -4,7 +4,6 @@ import { VscClose } from 'react-icons/vsc'
 import { AiFillCloseSquare } from 'react-icons/ai'
 import { countryList } from '../../utils/country-list'
 import { monthList } from '../../utils/month-list'
-import axios from 'axios'
 import { createGuess } from '../../services/api-routes'
 import { useAppSelector } from '../../store/hooks'
 import { selectUser } from '../../store/userSlice'
@@ -42,10 +41,6 @@ export const GuessModal = ({ setOpenModal, poolId }: Props) => {
       userId: currentUser?.id,
     })
   }
-
-  
-  console.log('currentUser', currentUser);
-  
 
   useEffect(() => {
     if (click) {
@@ -128,8 +123,11 @@ export const GuessModal = ({ setOpenModal, poolId }: Props) => {
         id="month"
         className="bg-gray-600 text-center w-[115px] h-[40px] outline-none p-2 rounded"
       >
-        {Object.entries(monthList).map((month, index) => (
-          <option key={index} value={Number(month[0]) < 10 ? '0' + month[0] : month[0]}>
+        {Object.entries(monthList).map((month: any, index) => (
+          <option
+            key={index}
+            value={Number(month[0]) < 10 ? '0' + month[0] : month[0]}
+          >
             {month[1]}
           </option>
         ))}
@@ -192,9 +190,11 @@ export const GuessModal = ({ setOpenModal, poolId }: Props) => {
               className="bg-gray-600 w-full outline-none p-2 rounded"
             >
               <option disabled>Selecione o primeiro time</option>
-              {Object.entries(countryList).map((country, index) => (
+              {Object.entries(countryList).map((country: any, index) => (
                 <option key={index} value={country[0]}>
-                  {country[1]} ({country[0]})
+                  <span>
+                    {country[1]} ({country[0]})
+                  </span>
                 </option>
               ))}
             </select>
@@ -224,9 +224,11 @@ export const GuessModal = ({ setOpenModal, poolId }: Props) => {
               className="bg-gray-600 w-full outline-none p-2 rounded"
             >
               <option disabled>Selecione o segundo time</option>
-              {Object.entries(countryList).map((country, index) => (
+              {Object.entries(countryList).map((country: any, index) => (
                 <option key={index} value={country[0]}>
-                  {country[1]} ({country[0]})
+                  <span>
+                    {country[1]} ({country[0]})
+                  </span>
                 </option>
               ))}
             </select>

@@ -1,12 +1,16 @@
 import Head from 'next/head'
 import React, { useEffect, useState } from 'react'
 import { Header } from '../../components/pool/Header'
-import ReactCountryFlag from 'react-country-flag'
-import { VscClose } from 'react-icons/vsc'
 import { GuessModal } from '../../components/pool/GuessModal'
 import { Guess } from '../../components/pool/Guess'
 import { api } from '../../lib/axios'
-import { guessesByPoolId, poolByCode } from '../../services/api-routes'
+import {
+  guessesByPoolId,
+  guessesByUserId,
+  poolByCode,
+} from '../../services/api-routes'
+import { useAppSelector } from '../../store/hooks'
+import { selectUser } from '../../store/userSlice'
 
 interface Props {
   pool: [Pool]
@@ -17,6 +21,10 @@ export default function PoolCode({ pool }: Props) {
   const [activeItem, setActiveItem] = useState('your_guesses')
   const [openModal, setOpenModal] = useState(false)
   const [guesses, setGuesses] = useState([])
+  const [userGuesses, setUserGuesses] = useState([])
+  const currentUser = useAppSelector(selectUser)
+
+  console.log('currentUser', currentUser)
 
   useEffect(() => {
     ;(async () => {
@@ -27,11 +35,37 @@ export default function PoolCode({ pool }: Props) {
           },
         })
         .then(({ data }) => setGuesses(data.guesses))
-        .catch((error) => console.log(error))
+        .catch((error) => console.log(error.toJSON()))
     })()
   }, [poolData])
 
-  console.log(guesses)
+  useEffect(() => {
+    ;(async () => {
+      await api
+        .get(guessesByUserId, {
+          params: {
+            userId: currentUser?.id,
+            poolId: poolData.id,
+          },
+        })
+        .then(({ data }) => setUserGuesses(data.guesses))
+        .catch((error) => console.log(error.toJSON()))
+    })()
+  }, [poolData, currentUser])
+
+
+  useEffect(() => {
+    const html = document.querySelector('html')
+    if (html) {
+      openModal
+        ? ((html.style.overflow = 'hidden'),
+          (html.style.maxHeight = '100vh'),
+          (html.style.position = 'fixed'))
+        : ((html.style.overflow = 'auto'),
+          (html.style.maxHeight = 'auto'),
+          (html.style.position = 'relative'))
+    }
+  }, [openModal])
 
   return (
     <>
@@ -45,7 +79,7 @@ export default function PoolCode({ pool }: Props) {
         <GuessModal setOpenModal={setOpenModal} poolId={poolData.id} />
       )}
 
-      <main className="w-screen min-h-screen bg-gray-900 ">
+      <main className="w-screen min-h-screen mb-14 bg-gray-900 ">
         <Header pool={poolData} />
         <section className="bg-gray-800 w-[600px] mt-8 mx-auto rounded text-white shadow-xl">
           <div className="w-[600px] mx-auto">
@@ -87,15 +121,15 @@ export default function PoolCode({ pool }: Props) {
         </section>
         {activeItem === 'your_guesses' && guesses && (
           <>
-            {guesses.map((guess: any) => (
-              <Guess guess={guess} yourGuesses={true} />
+            {userGuesses.map((guess: ParticipantGuesses, index) => (
+              <Guess key={index} guess={guess} yourGuesses={true} />
             ))}
           </>
         )}
         {activeItem === 'all_guesses' && guesses && (
           <>
-            {guesses.map((guess: any) => (
-              <Guess guess={guess} />
+            {guesses.map((guess: ParticipantGuesses, index) => (
+              <Guess key={index} guess={guess} />
             ))}
           </>
         )}
@@ -137,8 +171,6 @@ export const getServerSideProps = async (context: any) => {
     })
     .then(({ data }) => data)
     .catch((error) => console.log(error.toJSON()))
-
-  console.log(pool)
 
   return {
     props: {

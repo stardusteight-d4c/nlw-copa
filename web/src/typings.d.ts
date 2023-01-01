@@ -16,3 +16,21 @@ interface Pool {
   createdAt: Date
   ownerId: string
 }
+
+interface ParticipantGuesses {
+  id: string
+  poolId: string
+  userId: string
+  guesses: [Guess]
+}
+
+interface Guess {
+  createdAt: string
+  date: string
+  firstTeamCountryCode: string
+  firstTeamPoints: number
+  id: string
+  participantId: string
+  secondTeamCountryCode: string
+  secondTeamPoints: number
+}

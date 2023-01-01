@@ -8,12 +8,7 @@ import { FormEvent, useState } from 'react'
 import { Dashboard } from '../components/Dashboard'
 import { useAppSelector } from '../store/hooks'
 import { selectUser } from '../store/userSlice'
-import { useAppDispatch } from '../store/hooks'
-import { useEffect } from 'react'
-import { onAuthStateChanged } from 'firebase/auth'
-import { login, logout } from '../store/userSlice'
-import { auth } from '../services/firebase'
-import { createPool, createUser } from '../services/api-routes'
+import { createPool } from '../services/api-routes'
 
 interface HomeProps {
   poolCount: number
@@ -24,31 +19,6 @@ interface HomeProps {
 export default function Home(props: HomeProps) {
   const [pool, setPool] = useState('')
   const currentUser = useAppSelector(selectUser)
-  const dispatch = useAppDispatch()
-
-  useEffect(() => {
-    onAuthStateChanged(auth, async (user) => {
-      user
-        ? await api
-            .post(createUser, {
-              email: user.email,
-              name: user.displayName,
-              avatarUrl: user.photoURL,
-            })
-            .then(({ data }) => {
-              dispatch(
-                login({
-                  id: data.user.id,
-                  email: data.user.email,
-                  name: data.user.name,
-                  avatarUrl: data.user.avatarUrl,
-                })
-              )
-            })
-            .catch((error) => console.log(error.toJSON()))
-        : dispatch(logout())
-    })
-  }, [])
 
   async function handleCreatePool(event: FormEvent) {
     event?.preventDefault()

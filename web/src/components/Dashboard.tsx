@@ -104,8 +104,8 @@ export const Dashboard = (props: Props) => {
               {pools !== undefined && pools !== null && pools.length > 0 ? (
                 <>
                   <div className="space-y-2 max-h-[530px] overflow-y-scroll overflow-x-hidden py-2">
-                    {pools.map((pool) => (
-                      <Pools title={pool.title} code={pool.code} />
+                    {pools.map((pool, index) => (
+                      <Pools key={index} poolId={pool.id} title={pool.title} code={pool.code} />
                     ))}
                   </div>
                 </>

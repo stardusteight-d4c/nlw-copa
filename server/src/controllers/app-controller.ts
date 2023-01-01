@@ -55,6 +55,44 @@ export class AppController {
     }
   }
 
+  async participants(
+    request: FastifyRequest<{ Querystring: { poolId: string } }>,
+    reply: FastifyReply
+  ) {
+    const poolId = request.query.poolId
+    const participants = await prisma.participant.findMany({
+      where: {
+        poolId,
+      },
+      select: {
+        user: true,
+      },
+      take: 4,
+    })
+    const count = await prisma.participant.count({
+      where: {
+        poolId,
+      },
+    })
+
+    return reply.status(200).send({ participants, count })
+  }
+
+  async getUserById(
+    request: FastifyRequest<{ Querystring: { userId: string } }>,
+    reply: FastifyReply
+  ) {
+    const userId = request.query.userId
+
+    const user = await prisma.user.findFirst({
+      where: {
+        id: userId,
+      },
+    })
+
+    return reply.status(200).send({ user })
+  }
+
   async countUsers() {
     const count = await prisma.user.count()
     return { count }
@@ -101,7 +139,32 @@ export class AppController {
       },
     })
 
-    return reply.status(201).send({ guesses })
+    return reply.status(200).send({ guesses })
+  }
+
+  async guessesByUserId(
+    request: FastifyRequest<{
+      Querystring: { userId: string; poolId: string }
+    }>,
+    reply: FastifyReply
+  ) {
+    const { userId, poolId } = request.query
+
+    console.log('userId', userId, 'poolId', poolId)
+
+    console.log(request.query)
+
+    const guesses = await prisma.participant.findMany({
+      where: {
+        userId,
+        poolId,
+      },
+      include: {
+        guesses: true,
+      },
+    })
+
+    return reply.status(200).send({ guesses })
   }
 
   async userPools(
@@ -151,8 +214,6 @@ export class AppController {
   ) {
     try {
       const { ...data } = request.body
-
-      console.log(data)
 
       const isAlreadyParticipating = await prisma.participant.findFirst({
         where: {
