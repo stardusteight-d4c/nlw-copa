@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import ReactCountryFlag from 'react-country-flag'
 import { VscClose } from 'react-icons/vsc'
+import { AiFillCloseSquare } from 'react-icons/ai'
 import { countryList } from '../../utils/country-list'
+import { monthList } from '../../utils/month'
 
 interface Props {
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>
@@ -9,12 +11,20 @@ interface Props {
 
 export const GuessModal = ({ setOpenModal }: Props) => {
   const [click, setClick] = useState<boolean>(false)
-  const [firstTeam, setFirstTeam] = useState('')
-  const [firstTeamScore, setFirstTeamScore] = useState('')
-  const [secondTeam, setSecondTeam] = useState('')
-  const [secondTeamScore, setSecondTeamScore] = useState('')
+  const [formData, setFormData] = useState({
+    firstTeam: '',
+    firstTeamScore: '',
+    secondTeam: '',
+    secondTeamScore: '',
+    day: '',
+    month: '',
+    year: '',
+    hour: '',
+    minutes: '',
+  })
 
-  const now = new Date()
+  console.log(formData);
+  
 
   useEffect(() => {
     if (click) {
@@ -47,7 +57,7 @@ export const GuessModal = ({ setOpenModal }: Props) => {
       <>
         {hours.map((hour) => (
           <option key={hour} value={hour}>
-            {hour}
+            {hour < 10 ? '0' + hour : hour}
           </option>
         ))}
       </>
@@ -63,11 +73,73 @@ export const GuessModal = ({ setOpenModal }: Props) => {
       <>
         {minutes.map((minute) => (
           <option key={minute} value={minute}>
-            {minute}
+            {minute < 10 ? '0' + minute : minute}
           </option>
         ))}
       </>
     )
+  }
+
+  const rendersDaysOptions = () => {
+    const days = []
+    for (var i = 1; i <= 31; i++) {
+      days.push(i)
+    }
+    return (
+      <select
+        onChange={(e) => handleChangeFormData(e)}
+        id="day"
+        className="bg-gray-600 text-center w-[60px] h-[40px] outline-none p-2 rounded"
+      >
+        {days.map((day) => (
+          <option key={day} value={day}>
+            {day}
+          </option>
+        ))}
+      </select>
+    )
+  }
+
+  const rendersMonthsOptions = () => {
+    return (
+      <select
+        onChange={(e) => handleChangeFormData(e)}
+        id="month"
+        className="bg-gray-600 text-center w-[115px] h-[40px] outline-none p-2 rounded"
+      >
+        {monthList.map((month) => (
+          <option key={month} value={month}>
+            {month}
+          </option>
+        ))}
+      </select>
+    )
+  }
+
+  const rendersYearsOptions = () => {
+    const years = [2022, 2026, 2030, 2034]
+    return (
+      <select
+        onChange={(e) => handleChangeFormData(e)}
+        id="year"
+        className="bg-gray-600 text-center w-[75px] h-[40px] outline-none p-2 rounded"
+      >
+        {years.map((year) => (
+          <option key={year} value={year}>
+            {year}
+          </option>
+        ))}
+      </select>
+    )
+  }
+
+  const handleChangeFormData = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setFormData({
+      ...formData,
+      [event.target.id]: event.target.value,
+    })
   }
 
   return (
@@ -76,21 +148,25 @@ export const GuessModal = ({ setOpenModal }: Props) => {
         onClick={() => setClick(true)}
         className="absolute overflow-hidden w-screen h-screen bg-black/20 inset-0 z-40"
       />
-      <div className="bg-gray-800 p-4 max-w-xl text-white rounded border border-gray-600  absolute z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-        <h1 className="text-xl text-center mb-2 font-bold">Selecione o jogo</h1>
-        <div className="flex flex-col justify-center items-center gap-y-2">
+      <div className="bg-gray-800 p-8 max-w-xl text-white rounded border border-gray-600  absolute z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+        <h1 className="text-xl text-center my-2 font-bold">Defina o jogo</h1>
+        <div className="flex flex-col justify-center items-center gap-y-2 relative">
+          <AiFillCloseSquare
+            onClick={() => setOpenModal(false)}
+            className="text-2xl cursor-pointer absolute -top-[60px] right-0"
+          />
           <div className="flex gap-x-5 items-center">
             <ReactCountryFlag
-              countryCode={firstTeam || 'AF'}
+              countryCode={formData.firstTeam || 'AF'}
               svg
               style={{
                 width: '2.5em',
                 height: '2.5em',
               }}
-              title={firstTeam}
+              title={formData.firstTeam}
             />
             <select
-              onChange={(e) => setFirstTeam(e.target.value)}
+              onChange={(e) => handleChangeFormData(e)}
               id="firstTeam"
               className="bg-gray-600 w-full outline-none p-2 rounded"
             >
@@ -102,7 +178,7 @@ export const GuessModal = ({ setOpenModal }: Props) => {
               ))}
             </select>
             <select
-              onChange={(e) => setFirstTeamScore(e.target.value)}
+              onChange={(e) => handleChangeFormData(e)}
               id="firstTeamScore"
               className="bg-gray-600 w-[70px] outline-none p-2 rounded"
             >
@@ -113,16 +189,16 @@ export const GuessModal = ({ setOpenModal }: Props) => {
           <VscClose className="text-gray-200 text-3xl mx-5" />
           <div className="flex gap-x-5 items-center">
             <ReactCountryFlag
-              countryCode={secondTeam || 'AF'}
+              countryCode={formData.secondTeam || 'AF'}
               svg
               style={{
                 width: '2.5em',
                 height: '2.5em',
               }}
-              title={secondTeam}
+              title={formData.secondTeam}
             />
             <select
-              onChange={(e) => setSecondTeam(e.target.value)}
+              onChange={(e) => handleChangeFormData(e)}
               id="secondTeam"
               className="bg-gray-600 w-full outline-none p-2 rounded"
             >
@@ -135,7 +211,7 @@ export const GuessModal = ({ setOpenModal }: Props) => {
             </select>
 
             <select
-              onChange={(e) => setSecondTeamScore(e.target.value)}
+              onChange={(e) => handleChangeFormData(e)}
               id="secondTeamScore"
               className="bg-gray-600 w-[70px] outline-none p-2 rounded"
             >
@@ -146,26 +222,38 @@ export const GuessModal = ({ setOpenModal }: Props) => {
           <h2 className="text-xl text-center mt-4 font-bold">
             Data e horário do jogo
           </h2>
-          <div className="flex items-center gap-x-4">
-            {/* ocultar o input do tipo date e exibir uma div com os valore selecionados, ao clicar na div exibir date */}
-            {/* <input
-              className="bg-gray-600 w-[270px] h-[40px] text-center outline-none p-2 rounded"
-              id="date"
-              type="date"
-            /> */}
-
-            <div className="flex items-center gap-x-2">
-              <select className="bg-gray-600 w-[70px] h-[40px] outline-none p-2 rounded">
+          <div className="flex items-center">
+            <div className="flex items-center gap-x-1 mr-4">
+              {rendersDaysOptions()}
+              {rendersMonthsOptions()}
+              {rendersYearsOptions()}
+            </div>
+            <div className="flex items-center">
+              <select
+                id="hour"
+                onChange={(e) => handleChangeFormData(e)}
+                className="bg-gray-600 text-center w-[55px] h-[40px] outline-none p-2 rounded"
+              >
                 <option disabled>Hora</option>
                 {rendersHoursOptions()}
               </select>
-              <span>:</span>
-              <select className="bg-gray-600 w-[70px] h-[40px] outline-none p-2 rounded">
+              <span className="text-3xl font-bold mx-[2px]">:</span>
+              <select
+                id="minutes"
+                onChange={(e) => handleChangeFormData(e)}
+                className="bg-gray-600 text-center w-[55px] h-[40px] outline-none p-2 rounded"
+              >
                 <option disabled>Minutos</option>
                 {rendersMinutesOptions()}
               </select>
             </div>
           </div>
+          <button
+            className="bg-yellow-500 mt-4 flex w-fit gap-x-2 justify-center items-center hover:brightness-110 text-gray-900 font-bold text-sm px-4 py-2 rounded"
+            type="button"
+          >
+            <span>Enviar palpite</span>
+          </button>
         </div>
       </div>
     </>
