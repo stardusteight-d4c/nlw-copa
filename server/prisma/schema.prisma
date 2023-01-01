@@ -45,23 +45,15 @@ model User {
   ownPools        Pool[]
 }
 
-model Game {
+model Guess {
   id                    String   @id @default(cuid())
-  date                  DateTime
   firstTeamCountryCode  String
   secondTeamCountryCode String
+  firstTeamPoints       Int
+  secondTeamPoints      Int
+  date                  String
+  createdAt             DateTime @default(now())
+  participantId         String
 
-  guesses Guess[]
-}
-
-model Guess {
-  id               String   @id @default(cuid())
-  firstTeamPoints  Int
-  secondTeamPoints Int
-  createdAt        DateTime @default(now())
-  gameId           String
-  participantId    String
-
-  game        Game        @relation(fields: [gameId], references: [id])
   participant Participant @relation(fields: [participantId], references: [id])
 }

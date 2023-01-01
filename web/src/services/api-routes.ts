@@ -2,5 +2,4 @@ export const createUser = '/createUser' // [POST -> body] {name, email, avatarUr
 export const createPool = '/createPool' // [POST -> body] {title, ownerId}
 export const getUserPools = '/usersPools' // [GET -> params] /:userId
 export const searchPoolByCode = '/searchPoolByCode' // [GET -> query] ?code=<code>
-
-
+export const createGuess = '/createGuess' // [POST -> body] { data }

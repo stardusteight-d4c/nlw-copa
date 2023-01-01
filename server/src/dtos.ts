@@ -12,3 +12,13 @@ export interface CreatePoolRequest {
 export interface UserPoolsRequest {
   userId: string
 }
+
+export interface CreateGuess {
+  firstTeamCountryCode: string
+  secondTeamCountryCode: string
+  firstTeamPoints: string
+  secondTeamPoints: string
+  date: string
+  poolId: string
+  userId: string
+}

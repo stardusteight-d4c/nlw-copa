@@ -3,7 +3,12 @@ import { FastifyReply } from 'fastify/types/reply'
 import { FastifyRequest } from 'fastify/types/request'
 import ShortUniqueId from 'short-unique-id'
 import { z } from 'zod'
-import { CreatePoolRequest, CreateUserRequest, UserPoolsRequest } from '../dtos'
+import {
+  CreateGuess,
+  CreatePoolRequest,
+  CreateUserRequest,
+  UserPoolsRequest,
+} from '../dtos'
 
 const prisma = new PrismaClient({
   log: ['query'],
@@ -14,7 +19,7 @@ export class AppController {
     request: FastifyRequest<{ Body: CreateUserRequest }>,
     reply: FastifyReply
   ) {
-    // If title is not of type string in the request, zod already triggers an error
+    // If name is not of type string in the request, zod already triggers an error
     const createCreateUserBody = z.object({
       name: z
         .string({
@@ -88,8 +93,6 @@ export class AppController {
   ) {
     const userId = request.params.userId
 
-    console.log(userId)
-
     const pools = await prisma.pool.findMany({
       take: 20,
       where: {
@@ -114,11 +117,73 @@ export class AppController {
       },
     })
 
-    console.log(pool)
     if (pool) {
       return reply.status(200).send({ pool: [pool] })
     } else {
       return reply.status(200).send({ pool: [] })
+    }
+  }
+
+  async createGuess(
+    request: FastifyRequest<{ Body: CreateGuess }>,
+    reply: FastifyReply
+  ) {
+    const { ...data } = request.body
+
+    console.log(data)
+
+    const isAlreadyParticipating = await prisma.participant.findFirst({
+      where: {
+        poolId: data.poolId,
+        userId: data.userId,
+      },
+    })
+
+    const createParticipant = async () => {
+      const participant = await prisma.participant.create({
+        data: {
+          poolId: data.poolId,
+          userId: data.userId,
+        },
+      })
+      return participant
+    }
+
+    const participant = isAlreadyParticipating
+      ? isAlreadyParticipating
+      : await createParticipant()
+
+    const guessAlreadyExistsI = await prisma.guess.findFirst({
+      where: {
+        participantId: participant.id,
+        firstTeamCountryCode: data.firstTeamCountryCode,
+        secondTeamCountryCode: data.secondTeamCountryCode,
+      },
+    })
+
+    const guessAlreadyExistsII = await prisma.guess.findFirst({
+      where: {
+        participantId: participant.id,
+        firstTeamCountryCode: data.secondTeamCountryCode,
+        secondTeamCountryCode: data.firstTeamCountryCode,
+      },
+    })
+
+    if (guessAlreadyExistsI || guessAlreadyExistsII) {
+      return reply.status(406).send({ status: false })
+    } else {
+      const guess = await prisma.guess.create({
+        data: {
+          firstTeamCountryCode: data.firstTeamCountryCode,
+          firstTeamPoints: Number(data.firstTeamPoints),
+          secondTeamCountryCode: data.secondTeamCountryCode,
+          secondTeamPoints: Number(data.secondTeamPoints),
+          date: data.date,
+          participantId: participant.id,
+        },
+      })
+
+      return reply.status(201).send({ guess: [guess] })
     }
   }
 
