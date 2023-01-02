@@ -45,5 +45,5 @@ export const getServerSideProps = async () => {
 
 const style = {
   wrapper: `bg-app bg-cover bg-no-repeat h-screen`,
-  mainContainer: `max-w-[1124px] pt-10 min-h-scree overflow-hidden mx-auto grid gap-28 grid-cols-2 items-center`,
+  mainContainer: `max-w-[1124px] pt-10 min-h-screen overflow-hidden mx-auto grid gap-28 grid-cols-2 items-center`,
 }

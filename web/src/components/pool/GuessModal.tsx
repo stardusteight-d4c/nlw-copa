@@ -1,20 +1,18 @@
 import React, { useEffect, useState } from 'react'
-import ReactCountryFlag from 'react-country-flag'
 import { VscClose } from 'react-icons/vsc'
 import { AiFillCloseSquare } from 'react-icons/ai'
-import { countryList } from '../../utils/country-list'
 import { createGuess } from '../../services/api-routes'
 import { useAppSelector } from '../../store/hooks'
 import { selectUser } from '../../store/userSlice'
 import { api } from '../../lib/axios'
 import {
   rendersDaysOptions,
-  rendersGolsOptions,
   rendersHoursOptions,
   rendersMinutesOptions,
   rendersMonthsOptions,
   rendersYearsOptions,
 } from './integrate/Options'
+import { SelectTeam } from './integrate/SelectTeam'
 
 interface Props {
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>
@@ -69,6 +67,20 @@ export const GuessModal = ({ setOpenModal, poolId }: Props) => {
     })
   }
 
+  const selectFirstTeamProps = {
+    countryCode: formData.firstTeam,
+    teamId: 'firstTeam',
+    teamScoreId: 'firstTeamScore',
+    handleChangeFormData,
+  }
+
+  const selectSecondTeamProps = {
+    countryCode: formData.secondTeam,
+    teamId: 'secondTeam',
+    teamScoreId: 'secondTeamScore',
+    handleChangeFormData,
+  }
+
   return (
     <>
       <div onClick={() => setClick(true)} className={style.overlay} />
@@ -79,108 +91,25 @@ export const GuessModal = ({ setOpenModal, poolId }: Props) => {
             onClick={() => setOpenModal(false)}
             className={style.closeIcon}
           />
-          <div className="flex gap-x-5 items-center">
-            <ReactCountryFlag
-              countryCode={formData.firstTeam || 'AF'}
-              svg
-              style={{
-                width: '2.5em',
-                height: '2.5em',
-              }}
-              title={formData.firstTeam}
-            />
-            <select
-              onChange={(e) => handleChangeFormData(e)}
-              id="firstTeam"
-              className="bg-gray-600 w-full outline-none p-2 rounded"
-            >
-              <option disabled>Selecione o primeiro time</option>
-              {Object.entries(countryList).map((country: any, index) => (
-                <option key={index} value={country[0]}>
-                  <span>
-                    {country[1]} ({country[0]})
-                  </span>
-                </option>
-              ))}
-            </select>
-            <select
-              onChange={(e) => handleChangeFormData(e)}
-              id="firstTeamScore"
-              className="bg-gray-600 w-[70px] outline-none p-2 rounded"
-            >
-              <option disabled>Gols</option>
-              {rendersGolsOptions()}
-            </select>
-          </div>
 
-          <VscClose className="text-gray-200 text-3xl mx-5" />
-
-          <div className="flex gap-x-5 items-center">
-            <ReactCountryFlag
-              countryCode={formData.secondTeam || 'AF'}
-              svg
-              style={{
-                width: '2.5em',
-                height: '2.5em',
-              }}
-              title={formData.secondTeam}
-            />
-            <select
-              onChange={(e) => handleChangeFormData(e)}
-              id="secondTeam"
-              className="bg-gray-600 w-full outline-none p-2 rounded"
-            >
-              <option disabled>Selecione o segundo time</option>
-              {Object.entries(countryList).map((country: any, index) => (
-                <option key={index} value={country[0]}>
-                  <span>
-                    {country[1]} ({country[0]})
-                  </span>
-                </option>
-              ))}
-            </select>
-
-            <select
-              onChange={(e) => handleChangeFormData(e)}
-              id="secondTeamScore"
-              className="bg-gray-600 w-[70px] outline-none p-2 rounded"
-            >
-              <option disabled>Gols</option>
-              {rendersGolsOptions()}
-            </select>
-          </div>
+          <SelectTeam {...selectFirstTeamProps} />
+          <VscClose className={style.versusIcon} />
+          <SelectTeam {...selectSecondTeamProps} />
 
           <h1 className={style.title}>Data e horário do jogo</h1>
-          <div className="flex items-center">
-            <div className="flex items-center gap-x-1 mr-4">
+          <div className={style.flexCenter}>
+            <div className={style.selectDatetimeContainer}>
               {rendersDaysOptions({ handleChangeFormData })}
               {rendersMonthsOptions({ handleChangeFormData })}
               {rendersYearsOptions({ handleChangeFormData })}
             </div>
-            <div className="flex items-center">
-              <select
-                id="hour"
-                onChange={(e) => handleChangeFormData(e)}
-                className="bg-gray-600 text-center w-[55px] h-[40px] outline-none p-2 rounded"
-              >
-                <option disabled>Hora</option>
-                {rendersHoursOptions()}
-              </select>
-              <span className="text-3xl font-bold mx-[2px]">:</span>
-              <select
-                id="minutes"
-                onChange={(e) => handleChangeFormData(e)}
-                className="bg-gray-600 text-center w-[55px] h-[40px] outline-none p-2 rounded"
-              >
-                <option disabled>Minutos</option>
-                {rendersMinutesOptions()}
-              </select>
+            <div className={style.flexCenter}>
+              {rendersHoursOptions({ handleChangeFormData })}
+              <span className={style.twoPointsDivider}>:</span>
+              {rendersMinutesOptions({ handleChangeFormData })}
             </div>
           </div>
-          <button
-            className="bg-yellow-500 mt-4 flex w-fit gap-x-2 justify-center items-center hover:brightness-110 text-gray-900 font-bold text-sm px-4 py-2 rounded"
-            type="button"
-          >
+          <button className={style.submitButton} type="button">
             <span onClick={handleSubmit}>Enviar palpite</span>
           </button>
         </div>
@@ -195,4 +124,9 @@ const style = {
   contentContainer: `flex flex-col justify-center items-center gap-y-2 relative`,
   title: `text-xl text-center mt-4 font-bold`,
   closeIcon: `text-2xl cursor-pointer absolute -top-[10px] right-0`,
+  versusIcon: `text-gray-200 text-3xl mx-5`,
+  flexCenter: `flex items-center`,
+  selectDatetimeContainer: `flex items-center gap-x-1 mr-4`,
+  twoPointsDivider: `text-3xl font-bold mx-[2px]`,
+  submitButton: `bg-yellow-500 mt-4 flex w-fit gap-x-2 justify-center items-center hover:brightness-110 text-gray-900 font-bold text-sm px-4 py-2 rounded`,
 }

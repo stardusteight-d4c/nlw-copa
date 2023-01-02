@@ -8,6 +8,7 @@ import { monthList } from '../../utils/month-list'
 import { BsFillTrophyFill, BsTrophy } from 'react-icons/bs'
 import { useAppSelector } from '../../store/hooks'
 import { selectUser } from '../../store/userSlice'
+import { GameScore } from './integrate/GameScore'
 
 interface Props {
   guess?: ParticipantGuesses
@@ -56,58 +57,35 @@ export const Guess = ({ guess, yourGuesses, poolOwner }: Props) => {
           monthList[Number(month) < 10 ? month.split('')[1] : month]
 
         return (
-          <div
-            key={index}
-            className="bg-gray-800 relative border-b-[3px] p-6 border-b-yellow-500 w-[600px] mt-4 mx-auto rounded text-white shadow-xl"
-          >
-            <div className="text-center flex-col">
+          <div key={index} className={style.wrapper}>
+            <div className={style.presentationContainer}>
               <div>
-                <h2 className="font-bold text-2xl">
+                <h2 className={style.countries}>
                   {countryList[userGuess.firstTeamCountryCode]} vs.{' '}
                   {countryList[userGuess.secondTeamCountryCode]}
                 </h2>
-                <span className="text-gray-200">
+                <span className={style.datetimeSpan}>
                   {day} de {monthInWriting} de {year} às {hours}h
                 </span>
               </div>
             </div>
-            <div className="flex justify-center items-center mt-4">
-              <div className="flex gap-x-2 justify-center items-center">
-                <span className="flex items-center justify-center h-[35px] w-[50px] rounded bg-gray-900 border border-gray-800 text-white">
-                  {userGuess.firstTeamPoints}
-                </span>
-                <ReactCountryFlag
-                  countryCode={userGuess.firstTeamCountryCode}
-                  svg
-                  style={{
-                    width: '2.5em',
-                    height: '2.5em',
-                  }}
-                  title={userGuess.firstTeamCountryCode}
-                />
-              </div>
-              <VscClose className="text-gray-200 text-3xl mx-5" />
-              <div className="flex gap-x-2 justify-center items-center">
-                <ReactCountryFlag
-                  countryCode={userGuess.secondTeamCountryCode}
-                  svg
-                  style={{
-                    width: '2.5em',
-                    height: '2.5em',
-                  }}
-                  title={userGuess.secondTeamCountryCode}
-                />
-                <span className="flex items-center justify-center h-[35px] w-[50px] rounded bg-gray-900 border border-gray-800 text-white">
-                  {userGuess.secondTeamPoints}
-                </span>
-              </div>
+            <div className={style.gameScoreContainer}>
+              <GameScore
+                teamPoints={userGuess.firstTeamPoints}
+                teamCountryCode={userGuess.firstTeamCountryCode}
+              />
+              <VscClose className={style.versusIcon} />
+              <GameScore
+                teamPoints={userGuess.secondTeamPoints}
+                teamCountryCode={userGuess.secondTeamCountryCode}
+              />
             </div>
             {!yourGuesses && (
-              <div className="absolute right-4 bottom-2 cursor-pointer z-20 w-fit p-2">
+              <div className={style.trophyContainer}>
                 {userGuess.winner ? (
                   <BsFillTrophyFill
                     title="Ganhador"
-                    className="text-xl text-yellow-500"
+                    className={style.winnerTrophy}
                   />
                 ) : (
                   <>
@@ -115,7 +93,7 @@ export const Guess = ({ guess, yourGuesses, poolOwner }: Props) => {
                       <BsTrophy
                         onClick={() => handleWinner(userGuess.id)}
                         title="Settar como ganhador"
-                        className="text-xl text-white"
+                        className={style.defaultTrophy}
                       />
                     )}
                   </>
@@ -123,11 +101,9 @@ export const Guess = ({ guess, yourGuesses, poolOwner }: Props) => {
               </div>
             )}
             {!yourGuesses && (
-              <div className="w-full absolute left-0 bottom-1 text-sm text-center">
+              <div className={style.createByContainer}>
                 <span>Criado por </span>
-                <span className="w-fit text-yellow-500 uppercase font-bold mx-auto">
-                  {participant?.name}
-                </span>
+                <span className={style.nameSpan}>{participant?.name}</span>
               </div>
             )}
           </div>
@@ -135,4 +111,18 @@ export const Guess = ({ guess, yourGuesses, poolOwner }: Props) => {
       })}
     </>
   )
+}
+
+const style = {
+  wrapper: `bg-gray-800 relative border-b-[3px] p-6 border-b-yellow-500 w-[600px] mt-4 mx-auto rounded text-white shadow-xl`,
+  presentationContainer: `text-center flex-col`,
+  countries: `font-bold text-2xl`,
+  datetimeSpan: `text-gray-200`,
+  gameScoreContainer: `flex justify-center items-center mt-4`,
+  versusIcon: `text-gray-200 text-3xl mx-5`,
+  trophyContainer: `absolute right-4 bottom-2 cursor-pointer z-20 w-fit p-2`,
+  winnerTrophy: `text-xl text-yellow-500`,
+  defaultTrophy: `text-xl text-white`,
+  createByContainer: `w-full absolute left-0 bottom-1 text-sm text-center`,
+  nameSpan: `w-fit text-yellow-500 uppercase font-bold mx-auto`,
 }

@@ -21,35 +21,45 @@ export const rendersGolsOptions = () => {
   )
 }
 
-export const rendersHoursOptions = () => {
+export const rendersHoursOptions = ({ handleChangeFormData }: Props) => {
   const hours = []
   for (var i = 1; i <= 24; i++) {
     hours.push(i)
   }
   return (
-    <>
+    <select
+      id="hour"
+      onChange={(e) => handleChangeFormData(e)}
+      className="bg-gray-600 text-center w-[55px] h-[40px] outline-none p-2 rounded"
+    >
+      <option disabled>Hora</option>
       {hours.map((hour) => (
         <option key={hour} value={hour}>
           {hour < 10 ? '0' + hour : hour}
         </option>
       ))}
-    </>
+    </select>
   )
 }
 
-export const rendersMinutesOptions = () => {
+export const rendersMinutesOptions = ({ handleChangeFormData }: Props) => {
   const minutes = []
   for (var i = 0; i <= 59; i += 5) {
     minutes.push(i)
   }
   return (
-    <>
+    <select
+      id="minutes"
+      onChange={(e) => handleChangeFormData(e)}
+      className="bg-gray-600 text-center w-[55px] h-[40px] outline-none p-2 rounded"
+    >
+      <option disabled>Minutos</option>
       {minutes.map((minute) => (
         <option key={minute} value={minute}>
           {minute < 10 ? '0' + minute : minute}
         </option>
       ))}
-    </>
+    </select>
   )
 }
 

@@ -15,7 +15,7 @@ export const Dashboard = (props: Props) => {
   const provider = new GoogleAuthProvider()
 
   const rendersAuthButtons = () => (
-    <div className={style.enterContainer}>
+    <>
       {currentUser ? (
         <button
           onClick={() => auth.signOut()}
@@ -31,7 +31,7 @@ export const Dashboard = (props: Props) => {
           Entrar com Google
         </button>
       )}
-    </div>
+    </>
   )
 
   return (
@@ -47,7 +47,6 @@ export const Dashboard = (props: Props) => {
 }
 
 const style = {
-  colSpan: `col-span-1 h-full`,
-  enterContainer: `w-full flex items-end justify-end`,
-  authButton: `hover:brightness-110 text-white font-bold text-sm uppercase px-6 py-4 rounded`,
+  colSpan: `col-span-1 relative`,
+  authButton: `hover:brightness-110 absolute -top-[205px] right-0 text-white font-bold text-sm uppercase px-6 py-4 rounded`,
 }
