@@ -8,6 +8,7 @@ import {
   CreatePoolRequest,
   CreateUserRequest,
   GuessesByPool,
+  SetWinningGuess,
   UserPoolsRequest,
 } from '../dtos'
 
@@ -55,6 +56,35 @@ export class AppController {
     }
   }
 
+  async setWinningGuess(
+    request: FastifyRequest<{ Body: SetWinningGuess }>,
+    reply: FastifyReply
+  ) {
+    const { guessId, participantId } = request.body
+
+    await prisma.participant.update({
+      where: {
+        id: participantId,
+      },
+      data: {
+        points: {
+          increment: 10,
+        },
+      },
+    })
+
+    await prisma.guess.update({
+      where: {
+        id: guessId,
+      },
+      data: {
+        winner: true,
+      },
+    })
+
+    return reply.status(200)
+  }
+
   async participants(
     request: FastifyRequest<{ Querystring: { poolId: string } }>,
     reply: FastifyReply
@@ -66,6 +96,7 @@ export class AppController {
       },
       select: {
         user: true,
+        points: true,
       },
       take: 4,
     })

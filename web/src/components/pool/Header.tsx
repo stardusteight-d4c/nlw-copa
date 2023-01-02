@@ -1,19 +1,19 @@
 import Link from 'next/link'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { IoMdArrowBack } from 'react-icons/io'
 import { AiOutlineTwitter } from 'react-icons/ai'
+import { api } from '../../lib/axios'
+import { getParticipants } from '../../services/api-routes'
 
 interface Props {
   pool: Pool
+  participants: any
 }
 
-export function Header({ pool }: Props) {
-  const last4participants = [
-    { userImg: 'https://avatars.githubusercontent.com/u/87643260?v=4' },
-    { userImg: 'https://avatars.githubusercontent.com/u/87643260?v=4' },
-    { userImg: 'https://avatars.githubusercontent.com/u/87643260?v=4' },
-    { userImg: 'https://avatars.githubusercontent.com/u/87643260?v=4' },
-  ]
+export function Header({ pool, participants }: Props) {
+  if (!participants.participants) {
+    return <></>
+  }
 
   return (
     <header className="h-fit text-white py-4 px-8 bg-gray-800">
@@ -24,19 +24,21 @@ export function Header({ pool }: Props) {
           </Link>
           <div className="flex -mt-12 ml-2 justify-center items-center">
             <div className="h-fit w-[180px] flex relative">
-              {last4participants.map((user, index) => {
+              {participants.participants.map((participant: any, index: any) => {
                 const position = index === 0 ? 32 : (index + 1) * 32
                 return (
                   <img
                     key={index}
-                    src={user.userImg}
+                    src={participant.user.avatarUrl}
                     className="rounded-full w-12 h-12 absolute border-[2px] border-gray-600"
                     style={{ right: position, zIndex: 4 - index }}
                   />
                 )
               })}
               <div className="rounded-full w-12 h-12 z-10 absolute text-white right-1 flex items-center justify-center bg-[#29292E] border-[2px] border-gray-600 tracking-widest">
-                +8
+                {participants.count > 4
+                  ? `+${participants.count - 4}`
+                  : participants.count}
               </div>
             </div>
           </div>

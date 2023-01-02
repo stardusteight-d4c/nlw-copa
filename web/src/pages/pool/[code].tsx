@@ -5,12 +5,14 @@ import { GuessModal } from '../../components/pool/GuessModal'
 import { Guess } from '../../components/pool/Guess'
 import { api } from '../../lib/axios'
 import {
+  getParticipants,
   guessesByPoolId,
   guessesByUserId,
   poolByCode,
 } from '../../services/api-routes'
 import { useAppSelector } from '../../store/hooks'
 import { selectUser } from '../../store/userSlice'
+import { RankingItem } from '../../components/pool/RankingItem'
 
 interface Props {
   pool: [Pool]
@@ -23,8 +25,24 @@ export default function PoolCode({ pool }: Props) {
   const [guesses, setGuesses] = useState([])
   const [userGuesses, setUserGuesses] = useState([])
   const currentUser = useAppSelector(selectUser)
+  const [participants, setParticipants] = useState<any>([])
 
-  console.log('currentUser', currentUser)
+  useEffect(() => {
+    ;(async () => {
+      await api
+        .get(getParticipants, {
+          params: {
+            poolId: poolData.id,
+          },
+        })
+        .then(({ data }) => {
+          console.log('data', data)
+
+          setParticipants(data)
+        })
+        .catch((error) => console.log(error.toJSON()))
+    })()
+  }, [pool])
 
   useEffect(() => {
     ;(async () => {
@@ -53,7 +71,6 @@ export default function PoolCode({ pool }: Props) {
     })()
   }, [poolData, currentUser])
 
-
   useEffect(() => {
     const html = document.querySelector('html')
     if (html) {
@@ -80,7 +97,7 @@ export default function PoolCode({ pool }: Props) {
       )}
 
       <main className="w-screen min-h-screen mb-14 bg-gray-900 ">
-        <Header pool={poolData} />
+        <Header pool={poolData} participants={participants} />
         <section className="bg-gray-800 w-[600px] mt-8 mx-auto rounded text-white shadow-xl">
           <div className="w-[600px] mx-auto">
             <button
@@ -134,28 +151,11 @@ export default function PoolCode({ pool }: Props) {
           </>
         )}
         {activeItem === 'group_ranking' && (
-          <div className="bg-gray-800 border-b-[3px] p-6 border-b-yellow-500 w-[600px] mt-4 mx-auto rounded text-white shadow-xl">
-            <div className="flex items-center justify-between">
-              <div className="flex gap-x-2 items-center">
-                <img
-                  src="https://github.com/stardusteight-d4c.png"
-                  className="w-14 h-14 rounded-full"
-                />
-                <div>
-                  <h2 className="text-xl font-bold">
-                    Gabriel Sena{' '}
-                    <span className="!text-base font-medium text-gray-300">
-                      (você)
-                    </span>
-                  </h2>
-                  <span className="text-gray-300">36 ponto(s)</span>
-                </div>
-              </div>
-              <div className="text-center px-4 font-bold bg-yellow-500 rounded-full text-gray-900">
-                1º
-              </div>
-            </div>
-          </div>
+          <>
+            {participants.participants.map((participant: any, index: any) => (
+              <RankingItem participant={participant} index={index} />
+            ))}
+          </>
         )}
       </main>
     </>

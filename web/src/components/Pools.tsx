@@ -25,8 +25,6 @@ export function Pools({ title, code, poolId }: Props) {
     })()
   }, [code])
 
-  console.log('participants', participants)
-
   if (!participants.participants) {
     return <></>
   }

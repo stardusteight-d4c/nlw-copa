@@ -7,3 +7,4 @@ export const guessesByPoolId = '/guessesByPoolId' // [GET -> query] ?poolId=<poo
 export const guessesByUserId = '/guessesByUserId' // [GET -> query] ?userId=<userId> ?poolId=<poolId>
 export const getUserById = '/userById' // [GET -> query] ?userId=<userId>
 export const getParticipants = '/participants' // [GET -> query] ?poolId=<poolId>
+export const setWinningGuess = '/setWinningGuess' // [POST -> body] {guessId, participantId}

@@ -26,6 +26,7 @@ model Participant {
   id     String @id @default(cuid())
   userId String
   poolId String
+  points Int    @default(0)
 
   guesses Guess[]
   user    User    @relation(fields: [userId], references: [id])
@@ -54,6 +55,7 @@ model Guess {
   date                  String
   createdAt             DateTime @default(now())
   participantId         String
+  winner                Boolean  @default(false)
 
   participant Participant @relation(fields: [participantId], references: [id])
 }

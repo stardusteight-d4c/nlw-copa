@@ -26,3 +26,8 @@ export interface CreateGuess {
   poolId: string
   userId: string
 }
+
+export interface SetWinningGuess {
+  guessId: string
+  participantId: string
+}

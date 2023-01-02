@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react'
 import ReactCountryFlag from 'react-country-flag'
 import { VscClose } from 'react-icons/vsc'
 import { api } from '../../lib/axios'
-import { getUserById } from '../../services/api-routes'
+import { getUserById, setWinningGuess } from '../../services/api-routes'
 import { countryList } from '../../utils/country-list'
 import { monthList } from '../../utils/month-list'
+import { BsFillTrophyFill, BsTrophy } from 'react-icons/bs'
 
 interface Props {
   guess?: ParticipantGuesses
@@ -26,6 +27,15 @@ export const Guess = ({ guess, yourGuesses }: Props) => {
     })()
   }, [])
 
+  const handleWinner = async (guessId: string) => {
+    api.post(setWinningGuess, {
+      guessId,
+      participantId: participant?.id,
+    })
+  }
+
+  console.log('guess', guess)
+
   return (
     <>
       {guess?.guesses.map((userGuess: Guess, index) => {
@@ -34,6 +44,8 @@ export const Guess = ({ guess, yourGuesses }: Props) => {
         const day = date.split('/')[0]
         const month: string = date.split('/')[1]
         const year = date.split('/')[2]
+
+        console.log('userGuess', userGuess)
 
         const monthInWriting =
           monthList[Number(month) < 10 ? month.split('')[1] : month]
@@ -85,6 +97,23 @@ export const Guess = ({ guess, yourGuesses }: Props) => {
                 </span>
               </div>
             </div>
+            {!yourGuesses && (
+              <>
+                {userGuess.winner ? (
+                  <BsFillTrophyFill
+                    title="Ganhador"
+                    className="absolute text-xl text-yellow-500 right-5 bottom-2"
+                  />
+                ) : (
+                  <>
+                    <BsTrophy
+                      title="Settar como ganhador"
+                      className="absolute text-xl text-white right-5 bottom-2"
+                    />
+                  </>
+                )}
+              </>
+            )}
             {!yourGuesses && (
               <div className="w-full absolute left-0 bottom-1 text-sm text-center">
                 <span>Criado por </span>

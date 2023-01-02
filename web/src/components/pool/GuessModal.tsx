@@ -31,15 +31,20 @@ export const GuessModal = ({ setOpenModal, poolId }: Props) => {
 
   const handleSubmit = async () => {
     const data = { ...formData }
-    await api.post(createGuess, {
-      firstTeamCountryCode: data.firstTeam,
-      firstTeamPoints: data.firstTeamScore,
-      secondTeamCountryCode: data.secondTeam,
-      secondTeamPoints: data.secondTeamScore,
-      date: `${data.day}/${data.month}/${data.year} ${data.hour}:${data.minutes}`,
-      poolId,
-      userId: currentUser?.id,
-    })
+    await api
+      .post(createGuess, {
+        firstTeamCountryCode: data.firstTeam,
+        firstTeamPoints: data.firstTeamScore,
+        secondTeamCountryCode: data.secondTeam,
+        secondTeamPoints: data.secondTeamScore,
+        date: `${data.day}/${data.month}/${data.year} ${data.hour}:${data.minutes}`,
+        poolId,
+        userId: currentUser?.id,
+      })
+      .then(() => {
+        alert('Palpite criado!')
+        setOpenModal(false)
+      })
   }
 
   useEffect(() => {

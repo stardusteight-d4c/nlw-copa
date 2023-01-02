@@ -21,6 +21,7 @@ interface ParticipantGuesses {
   id: string
   poolId: string
   userId: string
+  points: Number
   guesses: [Guess]
 }
 
@@ -33,4 +34,5 @@ interface Guess {
   participantId: string
   secondTeamCountryCode: string
   secondTeamPoints: number
+  winner: boolean
 }
