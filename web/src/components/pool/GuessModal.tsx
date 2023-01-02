@@ -3,11 +3,18 @@ import ReactCountryFlag from 'react-country-flag'
 import { VscClose } from 'react-icons/vsc'
 import { AiFillCloseSquare } from 'react-icons/ai'
 import { countryList } from '../../utils/country-list'
-import { monthList } from '../../utils/month-list'
 import { createGuess } from '../../services/api-routes'
 import { useAppSelector } from '../../store/hooks'
 import { selectUser } from '../../store/userSlice'
 import { api } from '../../lib/axios'
+import {
+  rendersDaysOptions,
+  rendersGolsOptions,
+  rendersHoursOptions,
+  rendersMinutesOptions,
+  rendersMonthsOptions,
+  rendersYearsOptions,
+} from './integrate/Options'
 
 interface Props {
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>
@@ -53,110 +60,6 @@ export const GuessModal = ({ setOpenModal, poolId }: Props) => {
     }
   }, [click])
 
-  const rendersGolsOptions = () => {
-    const gols = []
-    for (var i = 0; i <= 20; i++) {
-      gols.push(i)
-    }
-    return (
-      <>
-        {gols.map((gol) => (
-          <option key={gol} value={gol}>
-            {gol}
-          </option>
-        ))}
-      </>
-    )
-  }
-
-  const rendersHoursOptions = () => {
-    const hours = []
-    for (var i = 1; i <= 24; i++) {
-      hours.push(i)
-    }
-    return (
-      <>
-        {hours.map((hour) => (
-          <option key={hour} value={hour}>
-            {hour < 10 ? '0' + hour : hour}
-          </option>
-        ))}
-      </>
-    )
-  }
-
-  const rendersMinutesOptions = () => {
-    const minutes = []
-    for (var i = 0; i <= 59; i += 5) {
-      minutes.push(i)
-    }
-    return (
-      <>
-        {minutes.map((minute) => (
-          <option key={minute} value={minute}>
-            {minute < 10 ? '0' + minute : minute}
-          </option>
-        ))}
-      </>
-    )
-  }
-
-  const rendersDaysOptions = () => {
-    const days = []
-    for (var i = 1; i <= 31; i++) {
-      days.push(i)
-    }
-    return (
-      <select
-        onChange={(e) => handleChangeFormData(e)}
-        id="day"
-        className="bg-gray-600 text-center w-[60px] h-[40px] outline-none p-2 rounded"
-      >
-        {days.map((day) => (
-          <option key={day} value={day}>
-            {day}
-          </option>
-        ))}
-      </select>
-    )
-  }
-
-  const rendersMonthsOptions = () => {
-    return (
-      <select
-        onChange={(e) => handleChangeFormData(e)}
-        id="month"
-        className="bg-gray-600 text-center w-[115px] h-[40px] outline-none p-2 rounded"
-      >
-        {Object.entries(monthList).map((month: any, index) => (
-          <option
-            key={index}
-            value={Number(month[0]) < 10 ? '0' + month[0] : month[0]}
-          >
-            {month[1]}
-          </option>
-        ))}
-      </select>
-    )
-  }
-
-  const rendersYearsOptions = () => {
-    const years = [2022, 2026, 2030, 2034]
-    return (
-      <select
-        onChange={(e) => handleChangeFormData(e)}
-        id="year"
-        className="bg-gray-600 text-center w-[75px] h-[40px] outline-none p-2 rounded"
-      >
-        {years.map((year) => (
-          <option key={year} value={year}>
-            {year}
-          </option>
-        ))}
-      </select>
-    )
-  }
-
   const handleChangeFormData = (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
@@ -168,16 +71,13 @@ export const GuessModal = ({ setOpenModal, poolId }: Props) => {
 
   return (
     <>
-      <div
-        onClick={() => setClick(true)}
-        className="absolute overflow-hidden w-screen h-screen bg-black/20 inset-0 z-40"
-      />
-      <div className="bg-gray-800 p-8 max-w-xl text-white rounded border border-gray-600  absolute z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-        <h1 className="text-xl text-center my-2 font-bold">Defina o jogo</h1>
-        <div className="flex flex-col justify-center items-center gap-y-2 relative">
+      <div onClick={() => setClick(true)} className={style.overlay} />
+      <div className={style.wrapper}>
+        <div className={style.contentContainer}>
+          <h1 className={style.title}>Defina o jogo</h1>
           <AiFillCloseSquare
             onClick={() => setOpenModal(false)}
-            className="text-2xl cursor-pointer absolute -top-[60px] right-0"
+            className={style.closeIcon}
           />
           <div className="flex gap-x-5 items-center">
             <ReactCountryFlag
@@ -212,7 +112,9 @@ export const GuessModal = ({ setOpenModal, poolId }: Props) => {
               {rendersGolsOptions()}
             </select>
           </div>
+
           <VscClose className="text-gray-200 text-3xl mx-5" />
+
           <div className="flex gap-x-5 items-center">
             <ReactCountryFlag
               countryCode={formData.secondTeam || 'AF'}
@@ -247,14 +149,13 @@ export const GuessModal = ({ setOpenModal, poolId }: Props) => {
               {rendersGolsOptions()}
             </select>
           </div>
-          <h2 className="text-xl text-center mt-4 font-bold">
-            Data e horário do jogo
-          </h2>
+
+          <h1 className={style.title}>Data e horário do jogo</h1>
           <div className="flex items-center">
             <div className="flex items-center gap-x-1 mr-4">
-              {rendersDaysOptions()}
-              {rendersMonthsOptions()}
-              {rendersYearsOptions()}
+              {rendersDaysOptions({ handleChangeFormData })}
+              {rendersMonthsOptions({ handleChangeFormData })}
+              {rendersYearsOptions({ handleChangeFormData })}
             </div>
             <div className="flex items-center">
               <select
@@ -286,4 +187,12 @@ export const GuessModal = ({ setOpenModal, poolId }: Props) => {
       </div>
     </>
   )
+}
+
+const style = {
+  overlay: `absolute overflow-hidden w-screen h-screen bg-black/20 inset-0 z-40`,
+  wrapper: `bg-gray-800 p-8 max-w-xl text-white rounded border border-gray-600  absolute z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2`,
+  contentContainer: `flex flex-col justify-center items-center gap-y-2 relative`,
+  title: `text-xl text-center mt-4 font-bold`,
+  closeIcon: `text-2xl cursor-pointer absolute -top-[10px] right-0`,
 }

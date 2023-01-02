@@ -6,14 +6,18 @@ import { getUserById, setWinningGuess } from '../../services/api-routes'
 import { countryList } from '../../utils/country-list'
 import { monthList } from '../../utils/month-list'
 import { BsFillTrophyFill, BsTrophy } from 'react-icons/bs'
+import { useAppSelector } from '../../store/hooks'
+import { selectUser } from '../../store/userSlice'
 
 interface Props {
   guess?: ParticipantGuesses
   yourGuesses?: boolean
+  poolOwner: string
 }
 
-export const Guess = ({ guess, yourGuesses }: Props) => {
+export const Guess = ({ guess, yourGuesses, poolOwner }: Props) => {
   const [participant, setParticipant] = useState<User>()
+  const currentUser = useAppSelector(selectUser)
 
   useEffect(() => {
     ;(async () => {
@@ -30,11 +34,14 @@ export const Guess = ({ guess, yourGuesses }: Props) => {
   const handleWinner = async (guessId: string) => {
     api.post(setWinningGuess, {
       guessId,
-      participantId: participant?.id,
+      participantId: guess?.id,
     })
+    alert('O vencedor foi definido!')
   }
 
-  console.log('guess', guess)
+  if (!currentUser || !poolOwner) {
+    return <></>
+  }
 
   return (
     <>
@@ -44,8 +51,6 @@ export const Guess = ({ guess, yourGuesses }: Props) => {
         const day = date.split('/')[0]
         const month: string = date.split('/')[1]
         const year = date.split('/')[2]
-
-        console.log('userGuess', userGuess)
 
         const monthInWriting =
           monthList[Number(month) < 10 ? month.split('')[1] : month]
@@ -98,21 +103,24 @@ export const Guess = ({ guess, yourGuesses }: Props) => {
               </div>
             </div>
             {!yourGuesses && (
-              <>
+              <div className="absolute right-4 bottom-2 cursor-pointer z-20 w-fit p-2">
                 {userGuess.winner ? (
                   <BsFillTrophyFill
                     title="Ganhador"
-                    className="absolute text-xl text-yellow-500 right-5 bottom-2"
+                    className="text-xl text-yellow-500"
                   />
                 ) : (
                   <>
-                    <BsTrophy
-                      title="Settar como ganhador"
-                      className="absolute text-xl text-white right-5 bottom-2"
-                    />
+                    {poolOwner === currentUser?.id && (
+                      <BsTrophy
+                        onClick={() => handleWinner(userGuess.id)}
+                        title="Settar como ganhador"
+                        className="text-xl text-white"
+                      />
+                    )}
                   </>
                 )}
-              </>
+              </div>
             )}
             {!yourGuesses && (
               <div className="w-full absolute left-0 bottom-1 text-sm text-center">

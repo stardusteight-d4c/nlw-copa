@@ -82,7 +82,7 @@ export class AppController {
       },
     })
 
-    return reply.status(200)
+    return reply.status(200).send({})
   }
 
   async participants(
@@ -107,6 +107,26 @@ export class AppController {
     })
 
     return reply.status(200).send({ participants, count })
+  }
+
+  async allParticipants(
+    request: FastifyRequest<{ Querystring: { poolId: string } }>,
+    reply: FastifyReply
+  ) {
+    const poolId = request.query.poolId
+    const participants = await prisma.participant.findMany({
+      where: {
+        poolId,
+      },
+      select: {
+        user: true,
+        points: true,
+      },
+      orderBy: {
+        points: 'desc',
+      },
+    })
+    return reply.status(200).send({ participants })
   }
 
   async getUserById(
@@ -180,10 +200,6 @@ export class AppController {
     reply: FastifyReply
   ) {
     const { userId, poolId } = request.query
-
-    console.log('userId', userId, 'poolId', poolId)
-
-    console.log(request.query)
 
     const guesses = await prisma.participant.findMany({
       where: {

@@ -1,9 +1,7 @@
 import Link from 'next/link'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { IoMdArrowBack } from 'react-icons/io'
 import { AiOutlineTwitter } from 'react-icons/ai'
-import { api } from '../../lib/axios'
-import { getParticipants } from '../../services/api-routes'
 
 interface Props {
   pool: Pool
@@ -15,47 +13,67 @@ export function Header({ pool, participants }: Props) {
     return <></>
   }
 
-  return (
-    <header className="h-fit text-white py-4 px-8 bg-gray-800">
-      <div className="max-w-7xl w-full mx-auto flex justify-between items-center">
-        <div className="flex justify-center items-center">
-          <Link href="/">
-            <IoMdArrowBack className="text-2xl m-2 cursor-pointer" />
-          </Link>
-          <div className="flex -mt-12 ml-2 justify-center items-center">
-            <div className="h-fit w-[180px] flex relative">
-              {participants.participants.map((participant: any, index: any) => {
-                const position = index === 0 ? 32 : (index + 1) * 32
-                return (
-                  <img
-                    key={index}
-                    src={participant.user.avatarUrl}
-                    className="rounded-full w-12 h-12 absolute border-[2px] border-gray-600"
-                    style={{ right: position, zIndex: 4 - index }}
-                  />
-                )
-              })}
-              <div className="rounded-full w-12 h-12 z-10 absolute text-white right-1 flex items-center justify-center bg-[#29292E] border-[2px] border-gray-600 tracking-widest">
-                {participants.count > 4
-                  ? `+${participants.count - 4}`
-                  : participants.count}
-              </div>
-            </div>
-          </div>
+  const rendersParticipants = () => (
+    <div className={style.participantsWrapper}>
+      <div className={style.participantsContainer}>
+        {participants.participants.map((participant: any, index: any) => {
+          const position = index === 0 ? 32 : (index + 1) * 32
+          return (
+            <img
+              key={index}
+              src={participant.user.avatarUrl}
+              className={style.avatarImg}
+              style={{ right: position, zIndex: 4 - index }}
+            />
+          )
+        })}
+        <div className={style.participantsCount}>
+          {participants.count > 4
+            ? `+${participants.count - 4}`
+            : participants.count}
         </div>
-        <div className="w-fit ml-[20px] text-center">
-          <h3 className="font-bold text-lg">{pool.title}</h3>
-          <span className="text-gray-200">Código: {pool.code}</span>
+      </div>
+    </div>
+  )
+
+  return (
+    <header className={style.wrapper}>
+      <div className={style.container}>
+        <div className={style.leftItems}>
+          <Link href="/">
+            <IoMdArrowBack className={style.backIcon} />
+          </Link>
+          {rendersParticipants()}
+        </div>
+        <div className={style.centerItems}>
+          <h3 className={style.poolTitle}>{pool.title}</h3>
+          <span className={style.poolCode}>Código: {pool.code}</span>
         </div>
         <Link
           target="_blank"
           href={`https://twitter.com/intent/tweet?text=http%3A//localhost%3A3000/pool/${pool.code}`}
-          className="px-5 py-2 flex items-center justify-center bg-blue-500 rounded"
+          className={style.rightItems}
         >
-          <AiOutlineTwitter className="text-2xl mr-2 cursor-pointer" />
+          <AiOutlineTwitter className={style.twitterIcon} />
           <span>Compartilhar no Twitter</span>
         </Link>
       </div>
     </header>
   )
+}
+
+const style = {
+  wrapper: `h-fit text-white py-4 px-8 bg-gray-800`,
+  container: `max-w-7xl w-full mx-auto flex justify-between items-center`,
+  leftItems: `flex justify-center items-center`,
+  centerItems: `w-fit ml-[20px] text-center`,
+  rightItems: `px-5 py-2 flex items-center justify-center bg-blue-500 rounded`,
+  backIcon: `text-2xl m-2 cursor-pointer`,
+  participantsWrapper: `flex -mt-12 ml-2 justify-center items-center`,
+  participantsContainer: `h-fit w-[180px] flex relative`,
+  avatarImg: `rounded-full w-12 h-12 absolute border-[2px] border-gray-600`,
+  participantsCount: `rounded-full w-12 h-12 z-10 absolute text-white right-1 flex items-center justify-center bg-[#29292E] border-[2px] border-gray-600 tracking-widest`,
+  poolTitle: `font-bold text-lg`,
+  poolCode: `text-gray-200`,
+  twitterIcon: `text-2xl mr-2 cursor-pointer`,
 }

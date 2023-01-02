@@ -13,6 +13,7 @@ async function appRoutes(fastify: FastifyInstance) {
   fastify.get('/guessesByPoolId', appController.guessesByPoolId)
   fastify.get('/guessesByUserId', appController.guessesByUserId)
   fastify.get('/participants', appController.participants)
+  fastify.get('/allParticipants', appController.allParticipants)
   fastify.get('/userById', appController.getUserById)
   fastify.get('/pools/count', appController.countPools)
   fastify.get('/users/count', appController.countUsers)
