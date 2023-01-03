@@ -133,3 +133,102 @@ export class TriggersError {
   }
 }
 ```
+
+<br />
+
+## Zod | Data validation library 
+
+Zod is a library that `allows you to define rules for validating data`, Zod will automatically generate Typescript types for you, allowing you to use the received data more securely. We use Zod to validate the data that will be received on the REST server. `If ​​the data does not match the defined rules, the server will return an error indicating which field is incorrect and what was expected`.
+
+```ts
+// src/dtos.ts
+export function CreateGuessParser() {
+  return z.object({
+    firstTeamCountryCode: z.string({
+      required_error: 'firstTeamCountryCode is required',
+    }),
+    secondTeamCountryCode: z.string({
+      required_error: 'secondTeamCountryCode is required',
+    }),
+    firstTeamPoints: z.string({
+      required_error: 'firstTeamPoints is required',
+    }),
+    secondTeamPoints: z.string({
+      required_error: 'secondTeamPoints is required',
+    }),
+    date: z.string({
+      required_error: 'date is required',
+    }),
+    poolId: z.string({
+      required_error: 'poolId is required',
+    }),
+    userId: z.string({
+      required_error: 'userId is required',
+    }),
+  })
+}
+
+
+// src/controllers/app-controller.ts
+async createGuess(
+  request: FastifyRequest<{ Body: CreateGuess }>,
+  reply: FastifyReply
+) {
+  const createGuessBody = CreateGuessParser()
+  try {
+    const { ...data } = createGuessBody.parse(request.body)
+    const isAlreadyParticipating = await prisma.participant.findFirst({
+      where: {
+        poolId: data.poolId,
+        userId: data.userId,
+      },
+    })
+    const createParticipant = async () => {
+      const participant = await prisma.participant.create({
+        data: {
+          poolId: data.poolId,
+          userId: data.userId,
+        },
+      })
+
+      return participant
+    }
+
+    const participant = isAlreadyParticipating
+      ? isAlreadyParticipating
+      : await createParticipant()
+    const guessAlreadyExistsI = await prisma.guess.findFirst({
+      where: {
+        participantId: participant.id,
+        firstTeamCountryCode: data.firstTeamCountryCode,
+        secondTeamCountryCode: data.secondTeamCountryCode,
+      },
+    })
+    const guessAlreadyExistsII = await prisma.guess.findFirst({
+      where: {
+        participantId: participant.id,
+        firstTeamCountryCode: data.secondTeamCountryCode,
+        secondTeamCountryCode: data.firstTeamCountryCode,
+      },
+    })
+    if (guessAlreadyExistsI || guessAlreadyExistsII) {
+      return reply.status(406).send({ status: false })
+    } else {
+      const guess = await prisma.guess.create({
+        data: {
+          firstTeamCountryCode: data.firstTeamCountryCode,
+          firstTeamPoints: Number(data.firstTeamPoints),
+          secondTeamCountryCode: data.secondTeamCountryCode,
+          secondTeamPoints: Number(data.secondTeamPoints),
+          date: data.date,
+          participantId: participant.id,
+        },
+      })
+
+      return reply.status(201).send({ guess: [guess] })
+    }
+  } catch (error) {
+    new TriggersError(error, reply)
+  }
+}
+```
