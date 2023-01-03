@@ -232,3 +232,5 @@ async createGuess(
   }
 }
 ```
+
+In this backend application we use Fastify to create a REST API and we use Zod to validate the data sent by the user, so that the creation of REST APIs becomes increasingly sophisticated and robust, thinking about the integrity and coherence of the data.
