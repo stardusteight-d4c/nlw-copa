@@ -97,7 +97,7 @@ export const GuessModal = ({ setOpenModal, poolId }: Props) => {
           <SelectTeam {...selectSecondTeamProps} />
 
           <h1 className={style.title}>Data e horário do jogo</h1>
-          <div className={style.flexCenter}>
+          <div className={style.datimeWrapper}>
             <div className={style.selectDatetimeContainer}>
               {rendersDaysOptions({ handleChangeFormData })}
               {rendersMonthsOptions({ handleChangeFormData })}
@@ -120,11 +120,12 @@ export const GuessModal = ({ setOpenModal, poolId }: Props) => {
 
 const style = {
   overlay: `absolute overflow-hidden w-screen h-screen bg-black/20 inset-0 z-40`,
-  wrapper: `bg-gray-800 p-8 max-w-xl text-white rounded border border-gray-600  absolute z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2`,
+  wrapper: `bg-gray-800 p-2 md:p-8 w-full max-w-[98vw] md:max-w-xl text-white rounded border border-gray-600  absolute z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2`,
   contentContainer: `flex flex-col justify-center items-center gap-y-2 relative`,
   title: `text-xl text-center mt-4 font-bold`,
-  closeIcon: `text-2xl cursor-pointer absolute -top-[10px] right-0`,
+  closeIcon: `text-2xl cursor-pointer absolute top-[0px] md:-top-[10px] right-0`,
   versusIcon: `text-gray-200 text-3xl mx-5`,
+  datimeWrapper: `flex gap-y-2 flex-col md:flex-row items-center`,
   flexCenter: `flex items-center`,
   selectDatetimeContainer: `flex items-center gap-x-1 mr-4`,
   twoPointsDivider: `text-3xl font-bold mx-[2px]`,

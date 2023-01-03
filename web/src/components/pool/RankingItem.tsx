@@ -34,11 +34,11 @@ export const RankingItem = ({ participant, index }: Props) => {
 }
 
 const style = {
-  wrapper: `bg-gray-800 border-b-[3px] p-6 border-b-yellow-500 w-[600px] mt-4 mx-auto rounded text-white shadow-xl`,
+  wrapper: `bg-gray-800 border-b-[3px] p-6 border-b-yellow-500 w-full md:w-[600px] mt-4 mx-auto rounded text-white shadow-xl`,
   flexContainer: `flex items-center justify-between`,
   userInfos: `flex gap-x-2 items-center`,
   userImg: `w-14 h-14 rounded-full`,
-  userName: `text-xl font-bold`,
+  userName: `text-xl truncate max-w-[200px] md:max-w-[400px] font-bold`,
   youSpan: `!text-base font-medium text-gray-300`,
   points: `text-gray-300`,
   rankPosition: `text-center px-4 font-bold bg-yellow-500 rounded-full text-gray-900`,

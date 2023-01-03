@@ -109,8 +109,8 @@ export default function PoolCode({ pool }: Props) {
 
       {rendersModal()}
 
+      <Header pool={poolData} participants={participants} />
       <main className={style.wrapper}>
-        <Header pool={poolData} participants={participants} />
         <Menu
           activeItem={activeItem}
           setActiveItem={setActiveItem}
@@ -125,5 +125,5 @@ export default function PoolCode({ pool }: Props) {
 }
 
 const style = {
-  wrapper: `w-screen min-h-screen mb-14 bg-gray-900`,
+  wrapper: `w-screen p-2 md:p-0 min-h-screen mb-14 bg-gray-900`,
 }

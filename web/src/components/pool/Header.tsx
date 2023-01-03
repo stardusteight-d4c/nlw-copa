@@ -63,13 +63,13 @@ export function Header({ pool, participants }: Props) {
 }
 
 const style = {
-  wrapper: `h-fit text-white py-4 px-8 bg-gray-800`,
+  wrapper: `h-fit text-white p-2 md:py-4 md:px-8 bg-gray-800`,
   container: `max-w-7xl w-full mx-auto flex justify-between items-center`,
   leftItems: `flex justify-center items-center`,
-  centerItems: `w-fit ml-[20px] text-center`,
-  rightItems: `px-5 py-2 flex items-center justify-center bg-blue-500 rounded`,
+  centerItems: `w-fit md:ml-[20px] mx-auto md:mx-0 md:text-center`,
+  rightItems: `px-5 py-2 hidden md:flex items-center justify-center bg-blue-500 rounded`,
   backIcon: `text-2xl m-2 cursor-pointer`,
-  participantsWrapper: `flex -mt-12 ml-2 justify-center items-center`,
+  participantsWrapper: `hidden md:flex -mt-12 ml-2 justify-center items-center`,
   participantsContainer: `h-fit w-[180px] flex relative`,
   avatarImg: `rounded-full w-12 h-12 absolute border-[2px] border-gray-600`,
   participantsCount: `rounded-full w-12 h-12 z-10 absolute text-white right-1 flex items-center justify-center bg-[#29292E] border-[2px] border-gray-600 tracking-widest`,

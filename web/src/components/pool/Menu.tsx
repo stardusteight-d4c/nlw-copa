@@ -25,7 +25,7 @@ export const Menu = ({ activeItem, setOpenModal, setActiveItem }: Props) => {
               style.menuItem
             }`}
           >
-            Seus palpites
+            Meus <span className={style.hiddenMobileText}>palpites</span>
           </span>
           <span
             onClick={() => setActiveItem('all_guesses')}
@@ -33,7 +33,7 @@ export const Menu = ({ activeItem, setOpenModal, setActiveItem }: Props) => {
               style.menuItem
             }`}
           >
-            Todos palpites
+            Todos <span className={style.hiddenMobileText}>palpites</span>
           </span>
           <span
             onClick={() => setActiveItem('group_ranking')}
@@ -41,7 +41,8 @@ export const Menu = ({ activeItem, setOpenModal, setActiveItem }: Props) => {
               style.menuItem
             }`}
           >
-            Ranking do grupo
+            Ranking
+            <span className={style.hiddenMobileText}> do grupo</span>
           </span>
         </div>
       </div>
@@ -50,8 +51,9 @@ export const Menu = ({ activeItem, setOpenModal, setActiveItem }: Props) => {
 }
 
 const style = {
-  wrapper: `bg-gray-800 w-[600px] mt-8 mx-auto rounded text-white shadow-xl`,
-  buttonContainer: `w-[600px] mx-auto`,
+  wrapper: `bg-gray-800 w-full md:w-[600px] mt-8 mx-auto rounded text-white shadow-xl`,
+  buttonContainer: `md:w-[600px] mx-auto`,
+  hiddenMobileText: `hidden md:inline-block ml-1`,
   createGuessButton: `bg-ignite-500 hover:brightness-110 w-full text-white font-bold text-sm uppercase px-6 py-4 rounded-t`,
   menuContainer: `font-bold rounded gap-x-2 flex justify-between min-h-[50px] max-h-[50px] p-2`,
   menuItem: `rounded cursor-pointer flex items-center w-full justify-center min-h-full px-4`,

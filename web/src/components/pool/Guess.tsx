@@ -114,13 +114,13 @@ export const Guess = ({ guess, yourGuesses, poolOwner }: Props) => {
 }
 
 const style = {
-  wrapper: `bg-gray-800 relative border-b-[3px] p-6 border-b-yellow-500 w-[600px] mt-4 mx-auto rounded text-white shadow-xl`,
+  wrapper: `bg-gray-800 relative border-b-[3px] p-6 border-b-yellow-500 md:w-[600px] mt-4 mx-auto rounded text-white shadow-xl`,
   presentationContainer: `text-center flex-col`,
   countries: `font-bold text-2xl`,
   datetimeSpan: `text-gray-200`,
   gameScoreContainer: `flex justify-center items-center mt-4`,
   versusIcon: `text-gray-200 text-3xl mx-5`,
-  trophyContainer: `absolute right-4 bottom-2 cursor-pointer z-20 w-fit p-2`,
+  trophyContainer: `absolute right-1 md:right-4 bottom-1 md:bottom-2 cursor-pointer z-20 w-fit p-2`,
   winnerTrophy: `text-xl text-yellow-500`,
   defaultTrophy: `text-xl text-white`,
   createByContainer: `w-full absolute left-0 bottom-1 text-sm text-center`,

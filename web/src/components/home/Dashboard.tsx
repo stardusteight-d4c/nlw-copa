@@ -40,13 +40,14 @@ export const Dashboard = (props: Props) => {
       {currentUser ? (
         <ManagePanel />
       ) : (
-        <Image src={preview} alt="preview/img" />
+        <Image className={style.phonesImg} src={preview} alt="preview/img" />
       )}
     </section>
   )
 }
 
 const style = {
-  colSpan: `col-span-1 relative`,
-  authButton: `hover:brightness-110 absolute -top-[205px] right-0 text-white font-bold text-sm uppercase px-6 py-4 rounded`,
+  colSpan: `col-span-1 md:h-[740px] relative`,
+  authButton: `hover:brightness-110 w-full md:w-fit absolute inset-x-0 md:inset-x-auto -top-[250px] md:top-[0px] md:right-0 text-white font-bold text-sm uppercase px-6 py-4 rounded`,
+  phonesImg: `hidden md:block mt-24`,
 }

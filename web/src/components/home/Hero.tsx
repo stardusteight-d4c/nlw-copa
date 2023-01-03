@@ -56,7 +56,7 @@ export const Hero = (props: Props) => {
 
   return (
     <section className={style.colSpan}>
-      <Image src={logo} alt="logo/nlw-copa" />
+      <Image className="mx-auto md:mx-0" src={logo} alt="logo/nlw-copa" />
       <h1 className={style.title}>
         Crie seu próprio bolão da copa e compartilhe entre amigos!
       </h1>
@@ -97,18 +97,18 @@ export const Hero = (props: Props) => {
 
 const style = {
   colSpan: `col-span-1`,
-  title: `mt-14 text-white text-5xl font-bold leading-tight`,
-  userCountFlexContainer: `mt-10 flex items-center gap-x-2`,
+  title: `mt-14 text-center md:text-start text-white text-5xl font-bold leading-tight`,
+  userCountFlexContainer: `mt-10 flex flex-col md:flex-row gap-y-2 items-center gap-x-2`,
   userCountSpan: `text-white font-medium text-xl`,
   userCount: `text-ignite-500 mr-2`,
-  form: `mt-10 flex gap-2`,
+  form: `mt-10 flex flex-col md:flex-row gap-2`,
   input: `flex-1 text-gray-500 placeholder:text-sm outline-none px-6 py-4 rounded bg-gray-800 border border-gray-600`,
   submitButton: `bg-yellow-500 hover:brightness-110 text-gray-900 font-bold text-sm uppercase px-6 py-4 rounded`,
-  callToActionText: `text-yellow-500 text-center font-bold text-4xl pt-4`,
-  paragraph: `mt-4 text-sm leading-relaxed text-gray-300`,
-  footerContainer: `flex items-center justify-between mt-10 py-10 border-t border-gray-600 text-gray-100`,
-  flexCenter: `flex items-center`,
-  flexColContainer: `flex flex-col items-start p-4`,
+  callToActionText: `text-yellow-500 text-center md:text-start font-bold text-4xl pt-4`,
+  paragraph: `mt-4 text-center md:text-start text-sm leading-relaxed text-gray-300`,
+  footerContainer: `flex items-center justify-between mt-16 md:mt-10 py-10 md:border-t border-gray-600 text-gray-100`,
+  flexCenter: `flex flex-col md:flex-row items-center`,
+  flexColContainer: `flex flex-col items-center md:items-start p-4`,
   spanCount: `text-2xl font-bold`,
-  divider: `h-[63px] w-px bg-gray-600`,
+  divider: `h-[63px] hidden md:block w-px bg-gray-600`,
 }
