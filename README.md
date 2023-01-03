@@ -7,7 +7,7 @@
 > send your predictions for different matches of the World Cup games. The backend of the application relies on `Fastify` to develop servers for
 > web API services, `TypeScript` and `Zod` to validate, process and type data coming from requests and so that we have a more robust backend.
 
-:arrow_right: Fastify <br />
+:arrow_right: Fastify with TypeScript <br />
 :arrow_right: Zod | Data validation library <br />
 :arrow_right: Data Transfer Object (DTO) <br />
 :arrow_right: Server Side Rendering (SSR) <br />
@@ -15,7 +15,7 @@
 
 <br />
 
-## Fastify
+## Fastify with TypeScript
 
 Given one of the core goals of the project is `performance`, we do not land any feature if the implementation isn’t well optimized and the cost that we pay is as low as possible. Tomas Della Vedova — Lead maintainer of Fastify.
 
@@ -83,3 +83,53 @@ fastify.post('/the/url', { schema }, handler)
 In the above way, you can `exactly standardize your answers`, of course, this standardization does not eliminate tests in your application in any way. But they serve as a support and basis, `to guarantee even more the integrity of the information returned in their answers`. Even fastify has a request injection scheme, precisely to facilitate testing your application.
 
 Fastify is a real different approach, it `provides a light and small core` that is easy to extend with plugins and mature your application based on services, `focusing on performance and low overhead`. The architecture pattern that is used to build it enables ready-made, lightweight, and robust applications for microservices.
+
+### Typing data and handling errors and exceptions
+
+`Fastify request objects` have four dynamic properties: body, params, query, and headers. Their respective types are assignable through this interface. It is a named property interface enabling the developer to ignore the properties they do not want to specify. All omitted properties are defaulted to `unknown`. The corresponding property names are: `Body, Querystring, Params, Headers`.
+
+```ts
+// src/dtos.ts
+export interface GuessesByPool {
+  poolId: string
+}
+
+// src/controllers/app-controller.ts
+async guessesByPoolId(
+  request: FastifyRequest<{ Querystring: GuessesByPool }>,
+  reply: FastifyReply
+) {
+  const guessesByPoolIdQuery = z.object({
+    poolId: z.string({
+      required_error: 'poolId is required',
+    }),
+  })
+  try {
+    const { poolId } = guessesByPoolIdQuery.parse(request.query)
+
+    const guesses = await prisma.participant.findMany({
+      where: {
+        poolId,
+      },
+      include: {
+        guesses: true,
+      },
+    })
+
+    return reply.status(200).send({ guesses })
+  } catch (error) {
+    new TriggersError(error, reply)
+  }
+}
+
+// src/utils/TriggersError.ts
+export class TriggersError {
+  constructor(error: any, reply: FastifyReply) {
+    console.error(error)
+    return reply.status(500).send({
+      status: false,
+      msg: error.message,
+    })
+  }
+}
+```
