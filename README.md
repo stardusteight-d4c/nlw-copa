@@ -11,7 +11,6 @@
 :arrow_right: Zod | Data validation library <br />
 :arrow_right: Data Transfer Object (DTO) <br />
 :arrow_right: Server Side Rendering (SSR) <br />
-:arrow_right: Monorepo <br />
 
 <br />
 
