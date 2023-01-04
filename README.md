@@ -234,3 +234,40 @@ async createGuess(
 ```
 
 In this backend application we use Fastify to create a REST API and we use Zod to validate the data sent by the user, so that the creation of REST APIs becomes increasingly sophisticated and robust, thinking about the integrity and coherence of the data.
+
+<br />
+
+## Data Transfer Object (DTO) 
+
+`DTOs are data transfer objects`. They are not very. `These are simple interfaces or classes that represent the form of your API`.
+
+The idea is to use DTOs to create a contract for your API.
+
+If we modeled the initial form of the user entity as part of our RESTful API, we would likely have a DTO that looks like this.
+
+```ts
+export interface CreateUserRequest {
+  name: string
+  email: string
+  avatarUrl: string
+}
+```
+
+Then we'd use another pattern, the `data mapper pattern`, to hold the `responsibility of mapping the raw prisma object to the correct DTO shape`.
+
+This can be improved even further by encapsulating the ORM logic in a repository (which is not the case of what was done in this application).
+
+So, instead of relying on the server (and everything the server depends on), clients rely solely on the DTOs.
+
+<div align="center">
+<img src="dto.svg" width="700" />
+</div>
+
+### The advantages are that:
+
+ - The `DTOs become a strict contract for our API`. The clients rely on it. The server implements it.
+ - We've implemented architectural `dependency inversion` between the client and the server.
+ - The `DTOs` act as a layer of indirection and shield the clients from internal changes to the way the API is resolved.
+ - `Data mappers` act as a single location for object transformations. Instead of going through the codebase and changing API code that deals with raw sequelize users all over the place, it's done in one place.
+
+*<i>khalilstemmler.com/articles/enterprise-typescript-nodejs/use-dtos-to-enforce-a-layer-of-indirection</i> <br />
