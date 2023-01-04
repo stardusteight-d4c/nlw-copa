@@ -246,6 +246,8 @@ The idea is to use DTOs to create a contract for your API.
 If we modeled the initial form of the user entity as part of our RESTful API, we would likely have a DTO that looks like this.
 
 ```ts
+// src/dtos.ts
+
 export interface CreateUserRequest {
   name: string
   email: string
