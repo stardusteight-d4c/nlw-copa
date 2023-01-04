@@ -285,10 +285,6 @@ When a page is loaded it needs input (which we call assets). These are `the firs
 
 To continue the approach, let's understand how the browser receives and makes use of it on our website.
 
-<div align="center">
-<img src="uploading-files-via-browser.gif" width="400" />
-</div>
-
 Initially when we access content on the web, we have a `reference in the HTML document` that tells us what will be loaded and will also be the first thing that the browser will receive, `this document contains all the necessary references for the following assets, such as images , CSS and javascript`.
 
 The browser knows from this that it needs to go somewhere to locate and download these assets, as it builds the document. So, `even if the browser contains all of your HTML structure, it won't be able to render something friendly until the corresponding CSS, which contains all of your styling, is also loaded`.
