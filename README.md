@@ -273,3 +273,91 @@ So, instead of relying on the server (and everything the server depends on), cli
  - `Data mappers` act as a single location for object transformations. Instead of going through the codebase and changing API code that deals with raw sequelize users all over the place, it's done in one place.
 
 *<i>khalilstemmler.com/articles/enterprise-typescript-nodejs/use-dtos-to-enforce-a-layer-of-indirection</i> <br />
+
+<br />
+
+## Server Side Rendering (SSR) 
+
+Server Side Rendering or SSR `is the process of taking all the Javascript and all the CSS of a website that is usually loaded in the browser (client-side), and rendering them as static on the server`s side.
+
+`With this we can obtain a website with a reduced loading time and fully indexable by SEO's`. But to understand some of this loading time, we have to understand the principles of loading that is performed in your browser to see the real benefit of using some `SSR framework`.
+
+When a page is loaded it needs input (which we call assets). These are `the first contents to be delivered to the browser` so that, from there, it can carry out its work and `render the page` as quickly as possible for the user.
+
+To continue the approach, let's understand how the browser receives and makes use of it on our website.
+
+<div align="center">
+<img src="uploading-files-via-browser.gif" width="400" />
+</div>
+
+Initially when we access content on the web, we have a `reference in the HTML document` that tells us what will be loaded and will also be the first thing that the browser will receive, `this document contains all the necessary references for the following assets, such as images , CSS and javascript`.
+
+The browser knows from this that it needs to go somewhere to locate and download these assets, as it builds the document. So, `even if the browser contains all of your HTML structure, it won't be able to render something friendly until the corresponding CSS, which contains all of your styling, is also loaded`.
+
+Once done, your browser may have some relevant content to deliver to the user. After this process is finished, the browser will `download all javascript files` and that's where most of the problems tend to be.
+
+The files can be large and with the use of a bad internet the loading time can be long. In this way, your user experience will not be ideal, which can get worse if the first rendering depends on a javascript file.
+
+`The big advantage of using SSR is that we can deliver, almost immediately, meaningful content to the user`.
+
+This happens because the HTML and its main assets are loaded in the same file and delivered to the client.
+
+Therefore, we eliminated some steps in the process of downloading assets and the browser is only in charge of loading the created components and their flows that are also in a minified file. As a good practice, I strongly recommend using a CDN to cache these files.
+Benefits of using SSR
+
+ - Faster loading on initial render
+ - Because we have all the structure ready, we have a fully indexable HTML page. In this case great for SEO and Crawlers.
+
+### SSR with Next.js
+
+If a page uses Server-side Rendering, the page HTML is generated on each request.
+
+To use Server-side Rendering for a page, you need to export an async function called getServerSideProps. This function will be called by the server on every request.
+
+For example, suppose that your page needs to pre-render frequently updated data (fetched from an external API). You can write getServerSideProps which fetches this data and passes it to component like below:
+
+```tsx
+// src/pages/index.tsx
+export const getServerSideProps = async () => {
+  const [poolCountResponse, guessCountResponse, userCountResponse] =
+    await Promise.all([
+      api.get('pools/count'),
+      api.get('guesses/count'),
+      api.get('users/count'),
+    ])
+
+  return {
+    props: {
+      poolCount: poolCountResponse.data.count,
+      guessCount: guessCountResponse.data.count,
+      userCount: userCountResponse.data.count,
+    },
+  }
+}
+
+export default function Home(props: Props) {}
+
+// src/pages/pool/[code].tsx
+export const getServerSideProps = async (context: any) => {
+  const pool = await api
+    .get(poolByCode, {
+      params: {
+        code: context.params.code,
+      },
+    })
+    .then(({ data }) => data)
+    .catch((error) => console.log(error.toJSON()))
+
+  return {
+    props: {
+      ...pool,
+    },
+  }
+}
+
+export default function PoolCode({ pool }: Props) {}
+```
+
+If you export a function called getServerSideProps (Server-Side Rendering) from a page, Next.js will pre-render this page on each request using the data returned by getServerSideProps.
+
+*<i>medium.com/techbloghotmart/o-que-%C3%A9-server-side-rendering-e-como-usar-na-pr%C3%A1tica-a840d76a6dca</i> <br />
